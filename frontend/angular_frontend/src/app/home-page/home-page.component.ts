@@ -10,11 +10,11 @@ import { NgOptimizedImage } from '@angular/common';
   styleUrl: './home-page.component.css'
 })
 export class HomePageComponent {
-  title = 'Incident Response Simulator';
-  heroText = 'Compelling marketing copy blah blah blah';
-  ctaButtonText = "Let's Go!";
+  title: string = 'Incident Response Simulator';
+  heroText: string = 'Compelling marketing copy blah blah blah';
+  ctaButtonText: string = "Let's Go!";
 
-  onCTAButtonClick() {
+  onCTAButtonClick(): any {
     // TODO: fill this method out
   }
 }
