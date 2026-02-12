@@ -35,6 +35,16 @@ img {
   flex: 1;
 }
 
+.image-wrapper {
+  flex: 1;
+  position: relative;
+  height: 400px;
+}
+
+.image-wrapper img {
+  object-fit: contain;
+}
+
 .nb-button.orange {
   font-size: 24px;
   width: max(200px, 50%);

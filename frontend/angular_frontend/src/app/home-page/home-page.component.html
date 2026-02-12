@@ -1,12 +1,14 @@
 <app-navbar></app-navbar>
 <div class="hero-text">
-  <h1>Incident Response Simulator</h1>
+  <h1>{{ title }}</h1>
 </div>
 
 <div class="body-content">
   <div class="body-content-left">
-    <h2>Compelling Marketing Copy blah blah blah</h2>
-    <button class="nb-button orange">Let's Go!</button>
+    <h2>{{ heroText }}</h2>
+    <button class="nb-button orange" (click)="onCTAButtonClick()">{{ ctaButtonText }}</button>
   </div>
-  <img src="images/homepageArt.png" />
+  <div class="image-wrapper">
+    <img ngSrc="images/homepageArt.png" fill alt="Incident Response Simulator logo" />
+  </div>
 </div>
