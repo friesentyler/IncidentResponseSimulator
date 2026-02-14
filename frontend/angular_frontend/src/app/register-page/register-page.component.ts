@@ -8,5 +8,6 @@ import { NavbarComponent } from '../shared/navbar/navbar.component';
   styleUrl: './register-page.component.css'
 })
 export class RegisterPageComponent {
-
+  cardTitle: string = 'Create a new account';
+  cardText: string = 'Enter your email below to create a new account';
 }

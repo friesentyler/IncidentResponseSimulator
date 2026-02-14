@@ -1,0 +1,20 @@
+.card-container {
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nb-card:hover {
+  transform: none;
+  box-shadow: 8px 8px 0px #000;
+}
+
+.nb-card .nb-card-content .nb-card-actions {
+  align-self: center;
+}
+
+.nb-input.blue {
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
