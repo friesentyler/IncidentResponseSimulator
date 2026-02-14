@@ -6,11 +6,35 @@
       <p class="nb-card-text">{{ cardText }}
         <a routerLink="/login" routerLinkActive="active" class="login-link">login</a>
       </p>
-      <input class="nb-input blue" placeholder="Email" type="email" />
-      <input class="nb-input blue" placeholder="Password" type="password" />
-      <div class="nb-card-actions">
-        <button class="nb-button blue">Register</button>
-      </div>
+      <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
+        <div class="input-group">
+          <input id="email" formControlName="email" class="nb-input blue" placeholder="Email" type="email" />
+          @if (submitted && registrationForm.get('email')?.errors) {
+          <div class="error-message">
+            @if (registrationForm.get('email')?.errors?.['required']) { <div>Email is required</div> }
+            @if (registrationForm.get('email')?.errors?.['email']) { <div>Invalid email format</div> }
+          </div>
+          }
+        </div>
+
+        <div class="input-group">
+          <input id="password" formControlName="password" class="nb-input blue" placeholder="Password"
+            type="password" />
+          @if (submitted && registrationForm.get('password')?.errors) {
+          <div class="error-message">
+            @if (registrationForm.get('password')?.errors?.['required']) { <div>Password is required</div> }
+            @if (registrationForm.get('password')?.errors?.['minlength']) { <div>Password must be at least 12
+              characters</div> }
+            @if (registrationForm.get('password')?.errors?.['pattern']) { <div>Password must contain uppercase,
+              lowercase, number, and special character</div> }
+          </div>
+          }
+        </div>
+
+        <div class="nb-card-actions">
+          <button class="nb-button blue" type="submit">Register</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
