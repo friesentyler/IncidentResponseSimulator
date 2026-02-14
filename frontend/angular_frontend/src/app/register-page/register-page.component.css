@@ -10,6 +10,15 @@
   box-shadow: 8px 8px 0px #000;
 }
 
+.login-link {
+  color: grey;
+  text-decoration: underline;
+}
+
+.login-link:hover {
+  color: blue;
+}
+
 .nb-card .nb-card-content .nb-card-actions {
   align-self: center;
 }

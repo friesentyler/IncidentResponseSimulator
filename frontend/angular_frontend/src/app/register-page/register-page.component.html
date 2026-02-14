@@ -3,9 +3,11 @@
   <div class="nb-card">
     <div class="nb-card-content">
       <h4 class="nb-card-title">{{ cardTitle }}</h4>
-      <p class="nb-card-text">{{ cardText }}</p>
-      <input class="nb-input blue" placeholder="Email" />
-      <input class="nb-input blue" placeholder="Password" />
+      <p class="nb-card-text">{{ cardText }}
+        <a routerLink="/login" routerLinkActive="active" class="login-link">login</a>
+      </p>
+      <input class="nb-input blue" placeholder="Email" type="email" />
+      <input class="nb-input blue" placeholder="Password" type="password" />
       <div class="nb-card-actions">
         <button class="nb-button blue">Register</button>
       </div>
