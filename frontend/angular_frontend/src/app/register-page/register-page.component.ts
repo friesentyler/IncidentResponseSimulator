@@ -1,11 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register-page',
-  imports: [NavbarComponent, RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.css'
 })

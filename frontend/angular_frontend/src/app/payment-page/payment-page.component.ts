@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
-import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-payment-page',
   standalone: true,
-  imports: [NavbarComponent, CommonModule],
+  imports: [CommonModule],
   templateUrl: './payment-page.component.html',
   styleUrl: './payment-page.component.css'
 })
