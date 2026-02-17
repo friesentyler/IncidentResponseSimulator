@@ -11,8 +11,10 @@
                     <input id="email" formControlName="email" class="nb-input blue" placeholder="Email" type="email" />
                     @if (submitted && loginForm.get('email')?.errors) {
                     <div class="error-message">
-                        @if (loginForm.get('email')?.errors?.['required']) { <div>Email is required</div> }
-                        @if (loginForm.get('email')?.errors?.['email']) { <div>Invalid email format</div> }
+                        @if (loginForm.get('email')?.errors?.['required']) { <div id="email-req">Email is required</div>
+                        }
+                        @if (loginForm.get('email')?.errors?.['email']) { <div id="email-format-req">Invalid email
+                            format</div> }
                     </div>
                     }
                 </div>
@@ -22,7 +24,8 @@
                         type="password" />
                     @if (submitted && loginForm.get('password')?.errors) {
                     <div class="error-message">
-                        @if (loginForm.get('password')?.errors?.['required']) { <div>Password is required</div> }
+                        @if (loginForm.get('password')?.errors?.['required']) { <div id="password-req">Password is
+                            required</div> }
                     </div>
                     }
                 </div>
