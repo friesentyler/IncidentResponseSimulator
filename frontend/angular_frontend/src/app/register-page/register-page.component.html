@@ -1,4 +1,3 @@
-<app-navbar></app-navbar>
 <div class="card-container">
   <div class="nb-card">
     <div class="nb-card-content">
@@ -12,7 +11,8 @@
           @if (submitted && registrationForm.get('email')?.errors) {
           <div class="error-message">
             @if (registrationForm.get('email')?.errors?.['required']) { <div id="email-req">Email is required</div> }
-            @if (registrationForm.get('email')?.errors?.['email']) { <div id="email-format-req">Invalid email format</div> }
+            @if (registrationForm.get('email')?.errors?.['email']) { <div id="email-format-req">Invalid email format
+            </div> }
           </div>
           }
         </div>
@@ -22,10 +22,13 @@
             type="password" />
           @if (submitted && registrationForm.get('password')?.errors) {
           <div class="error-message">
-            @if (registrationForm.get('password')?.errors?.['required']) { <div id="password-req">Password is required</div> }
-            @if (registrationForm.get('password')?.errors?.['minlength']) { <div id="password-len-req">Password must be at least 12
+            @if (registrationForm.get('password')?.errors?.['required']) { <div id="password-req">Password is required
+            </div> }
+            @if (registrationForm.get('password')?.errors?.['minlength']) { <div id="password-len-req">Password must be
+              at least 12
               characters</div> }
-            @if (registrationForm.get('password')?.errors?.['pattern']) { <div id="password-complexity-req">Password must contain uppercase,
+            @if (registrationForm.get('password')?.errors?.['pattern']) { <div id="password-complexity-req">Password
+              must contain uppercase,
               lowercase, number, and special character</div> }
           </div>
           }
