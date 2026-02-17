@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -11,6 +11,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 })
 export class RegisterPageComponent {
   private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   cardTitle: string = 'Create a new account';
   cardText: string = 'Enter your email below to create a new account. If you already have an account';
@@ -26,6 +27,8 @@ export class RegisterPageComponent {
     if (this.registrationForm.valid) {
       console.log('Form Submitted!', this.registrationForm.value);
       // TODO: Implement actual registration logic
+      // Navigating to payment page after successful (simulated) registration
+      this.router.navigate(['/payment']);
     }
   }
 }

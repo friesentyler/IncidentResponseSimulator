@@ -1,0 +1,29 @@
+<app-navbar></app-navbar>
+
+<div class="payment-container">
+    <div class="payment-card">
+        <h1 class="title">Complete Your Registration</h1>
+        <p class="subtitle">Secure your account with a payment method.</p>
+
+        <form (submit)="handlePayment($event)" *ngIf="!success">
+            <div class="form-group">
+                <label for="card-element">Credit or debit card</label>
+                <div id="card-element" #cardElement class="stripe-element-container">
+                    <!-- Stripe Element will be inserted here -->
+                </div>
+                <div class="error-message" *ngIf="cardError">{{ cardError }}</div>
+            </div>
+
+            <button type="submit" class="payment-button" [disabled]="loading || !!cardError">
+                <span *ngIf="!loading">Pay Now</span>
+                <span *ngIf="loading" class="spinner"></span>
+            </button>
+        </form>
+
+        <div class="success-message" *ngIf="success">
+            <div class="success-icon">✓</div>
+            <h2>Payment Successful!</h2>
+            <p>Your account is now fully active. Redirecting you to the home page...</p>
+        </div>
+    </div>
+</div>
