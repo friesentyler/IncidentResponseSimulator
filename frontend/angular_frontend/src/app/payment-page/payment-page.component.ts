@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
 import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-payment-page',
@@ -19,9 +20,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   loading = false;
   success = false;
 
-  // WARNING: Replace with your actual Stripe Publishable Key from https://dashboard.stripe.com/test/apikeys
-  // Without a valid key, Stripe Elements will not mount correctly.
-  private readonly STRIPE_PUBLISHABLE_KEY = 'pk_test_placeholder_key';
+  // Stripe Publishable Key is sourced from src/environments/environment.ts
+  private readonly STRIPE_PUBLISHABLE_KEY = environment.stripePublishableKey;
 
   async ngOnInit() {
     this.stripe = await loadStripe(this.STRIPE_PUBLISHABLE_KEY);
