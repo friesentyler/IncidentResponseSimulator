@@ -1,21 +1,53 @@
-.scenarios-container {
-  margin: 20px;
-  height: 100dvh;
-}
-
-.nb-card.scenarios {
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   height: 100%;
+  width: 100%;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.scenarios.nb-card:hover {
+/* Overriding library media queries to ensure grid stability */
+.dashboard-grid .card-container,
+.dashboard-grid .nb-card {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  display: block !important;
+  margin: 0 !important;
+}
+
+.nb-card.scenarios:hover {
   transform: none;
   box-shadow: 8px 8px 0px #000;
 }
 
+.nb-card.details:hover {
+  transform: none;
+  box-shadow: 8px 8px 0px #000;
+}
+
+.sidebar {
+  height: 100%;
+  overflow: visible;
+}
+
+.content-area {
+  height: 100%;
+  overflow: visible;
+}
+
 .scenarios {
   background-color: yellow;
+  height: calc(100% - 5px) !important;
 }
 
 .scenario {
   background-color: white;
+}
+
+.details {
+  background-color: yellow;
+  height: calc(100% - 5px) !important;
 }
