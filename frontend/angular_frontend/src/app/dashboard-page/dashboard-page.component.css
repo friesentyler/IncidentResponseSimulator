@@ -30,7 +30,28 @@
 
 .sidebar {
   height: 100%;
-  overflow: visible;
+  overflow-y: auto;
+  /* Enable scrolling for the sidebar */
+  padding-right: 10px;
+  /* Space for the scrollbar to avoid clipping shadows */
+}
+
+.sidebar .card-container {
+  display: flex !important;
+  /* Force flexbox to enable gap */
+  flex-direction: column !important;
+  gap: 20px;
+  /* Increased spacing between scenario cards */
+  padding-bottom: 30px;
+  /* Even more room for the last shadow */
+  height: auto !important;
+  /* Allow container to grow within scrollable sidebar */
+}
+
+/* Explicitly override the broad grid height rule for individual scenario cards */
+.sidebar .nb-card {
+  height: auto !important;
+  margin-bottom: 0 !important;
 }
 
 .content-area {
@@ -40,14 +61,110 @@
 
 .scenarios {
   background-color: yellow;
-  height: calc(100% - 5px) !important;
+  height: auto !important;
+  /* Allow it to grow with content */
+  min-height: 100%;
 }
 
-.scenario {
-  background-color: white;
+.scenarios .nb-card-content {
+  overflow-y: visible;
+}
+
+.scenario-btn {
+  width: 100% !important;
+  min-height: 80px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 20px !important;
+  text-align: center !important;
+  height: auto !important;
+}
+
+.scenario-btn .nb-card-title {
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.details .nb-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+}
+
+.nested-title-card {
+  flex: 0 0 20% !important;
+  /* Enforce 20% height */
+  height: auto !important;
+  /* Override broad 100% rule */
+  margin-bottom: 0 !important;
+}
+
+/* Highly specific overrides to kill library hover effects */
+.dashboard-grid .nb-card.nested-title-card:hover,
+.dashboard-grid .nb-card.nested-body-card:hover {
+  transform: none !important;
+  box-shadow: 8px 8px 0px #000 !important;
+  transition: none !important;
+}
+
+.nested-body-card {
+  flex: 1;
+  /* Occupy remaining 80% */
+  height: auto !important;
+  /* Override broad 100% rule */
+  display: flex;
+  flex-direction: column;
+}
+
+.nested-body-card .nb-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .details {
   background-color: yellow;
   height: calc(100% - 5px) !important;
+}
+
+.scenario-details-body {
+  margin: 20px 0;
+  flex: 1;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  /* Center buttons horizontally */
+  gap: 40px;
+  /* Increased gap */
+  margin-top: 20px;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+.nb-button.green,
+.nb-button.blue {
+  flex: 1;
+  max-width: 350px;
+  /* Even larger max-width */
+  min-width: 200px;
+  /* Larger min-width */
+  padding: 25px 40px;
+  /* Even more padding */
+  font-size: 1.4rem;
+  /* Larger font-size */
+  font-weight: 800;
+  /* Bolder weight */
+}
+
+.nb-button.green {
+  background-color: #2ecc71;
+}
+
+.nb-button.blue {
+  background-color: #3498db;
 }

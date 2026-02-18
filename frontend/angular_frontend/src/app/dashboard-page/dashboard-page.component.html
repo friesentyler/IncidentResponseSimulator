@@ -2,16 +2,53 @@
   <div class="card-container sidebar">
     <div class="nb-card scenarios">
       <div class="nb-card-content scenarios">
-        <h4 class="nb-card-title">Scenarios</h4>
-        <!-- THIS NEEDS TO BE SEPARATE COMPONENT -->
         <div class="card-container">
-          <div class="nb-card">
-            <div class="nb-card-content scenario">
-              <p class="nb-card-text">Scenario 1</p>
-            </div>
-          </div>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Data Breach Investigation</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Phishing Campaign Response</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Ransomware Mitigation</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Insider Threat Detection</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">SQL Injection Prevention</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">DDoS Attack Defense</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Unauthorized Access Audit</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Cloud Security Misconfiguration</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">API Vulnerability Scan</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Social Engineering Test</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Zero-Day Exploit Response</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Malware Sandboxing Analysis</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Network Intrusion Forensics</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Credential Stuffing Defense</span>
+          </button>
+          <button class="nb-button default scenario-btn">
+            <span class="nb-card-title">Compliance Audit Prep</span>
+          </button>
         </div>
-        <!-- SEPARATE COMPONENT -->
       </div>
     </div>
   </div>
@@ -19,8 +56,26 @@
   <div class="card-container content-area">
     <div class="nb-card details">
       <div class="nb-card-content">
-        <h2 class="nb-card-title">Dashboard Overview</h2>
-        <p class="nb-card-text">Select a scenario from the sidebar to begin your simulation.</p>
+        <!-- Nested Title Card -->
+        <div class="nb-card nested-title-card">
+          <div class="nb-card-content">
+            <h2 class="nb-card-title">Scenario Details</h2>
+          </div>
+        </div>
+
+        <!-- Nested Body Card -->
+        <div class="nb-card nested-body-card">
+          <div class="nb-card-content">
+            <div class="scenario-details-body">
+              <p class="nb-card-text">Select a scenario from the left to view details and start the interactive
+                simulation or test your knowledge with a quiz.</p>
+            </div>
+            <div class="button-group">
+              <button class="nb-button blue">Start Scenario</button>
+              <button class="nb-button green">Start Quiz</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
