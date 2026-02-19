@@ -1,6 +1,6 @@
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1.3fr 2fr;
   height: 100%;
   width: 100%;
   gap: 20px;
@@ -29,11 +29,12 @@
 }
 
 .sidebar {
-  height: 100%;
-  overflow-y: auto;
-  /* Enable scrolling for the sidebar */
-  padding-right: 10px;
-  /* Space for the scrollbar to avoid clipping shadows */
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: 0 15px 15px 0;
+  /* Symmetrical padding: only right and bottom for shadow */
+  box-sizing: border-box;
+  min-width: 275px;
 }
 
 .sidebar .card-container {
@@ -57,17 +58,27 @@
 .content-area {
   height: 100%;
   overflow: visible;
+  padding: 0 0 15px 15px;
+  /* Match sidebar padding for symmetrical alignment */
+  box-sizing: border-box;
 }
 
-.scenarios {
+.dashboard-grid .nb-card.scenarios {
   background-color: yellow;
-  height: auto !important;
-  /* Allow it to grow with content */
-  min-height: 100%;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0 !important;
 }
 
-.scenarios .nb-card-content {
-  overflow-y: visible;
+.nb-card-content.scenarios {
+  overflow-y: auto !important;
+  padding: 10px 25px;
+  /* Internal padding for scrollbar space */
+  flex: 1;
+  min-height: 0;
+  /* Ensures flex item can shrink to allow scrolling */
 }
 
 .scenario-btn {
