@@ -1,3 +1,8 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
 .scenario-btn {
     width: 100% !important;
     min-height: 80px !important;

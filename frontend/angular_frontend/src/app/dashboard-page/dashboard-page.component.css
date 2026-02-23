@@ -23,10 +23,6 @@
   box-shadow: 8px 8px 0px #000;
 }
 
-.nb-card.details:hover {
-  transform: none;
-  box-shadow: 8px 8px 0px #000;
-}
 
 .sidebar {
   height: 100% !important;
@@ -79,88 +75,4 @@
   flex: 1;
   min-height: 0;
   /* Ensures flex item can shrink to allow scrolling */
-}
-
-
-.details .nb-card-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  height: 100%;
-}
-
-.nested-title-card {
-  flex: 0 0 20% !important;
-  /* Enforce 20% height */
-  height: auto !important;
-  /* Override broad 100% rule */
-  margin-bottom: 0 !important;
-}
-
-/* Highly specific overrides to kill library hover effects */
-.dashboard-grid .nb-card.nested-title-card:hover,
-.dashboard-grid .nb-card.nested-body-card:hover {
-  transform: none !important;
-  box-shadow: 8px 8px 0px #000 !important;
-  transition: none !important;
-}
-
-.nested-body-card {
-  flex: 1;
-  /* Occupy remaining 80% */
-  height: auto !important;
-  /* Override broad 100% rule */
-  display: flex;
-  flex-direction: column;
-}
-
-.nested-body-card .nb-card-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-}
-
-.details {
-  background-color: yellow;
-  height: calc(100% - 5px) !important;
-}
-
-.scenario-details-body {
-  margin: 20px 0;
-  flex: 1;
-}
-
-.button-group {
-  display: flex;
-  justify-content: center;
-  /* Center buttons horizontally */
-  gap: 40px;
-  /* Increased gap */
-  margin-top: 20px;
-  width: 100%;
-  padding-bottom: 20px;
-}
-
-.nb-button.green,
-.nb-button.blue {
-  flex: 1;
-  max-width: 350px;
-  /* Even larger max-width */
-  min-width: 200px;
-  /* Larger min-width */
-  padding: 25px 40px;
-  /* Even more padding */
-  font-size: 1.4rem;
-  /* Larger font-size */
-  font-weight: 800;
-  /* Bolder weight */
-}
-
-.nb-button.green {
-  background-color: #2ecc71;
-}
-
-.nb-button.blue {
-  background-color: #3498db;
 }
