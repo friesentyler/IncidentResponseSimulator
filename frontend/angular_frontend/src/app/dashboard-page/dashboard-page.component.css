@@ -81,21 +81,6 @@
   /* Ensures flex item can shrink to allow scrolling */
 }
 
-.scenario-btn {
-  width: 100% !important;
-  min-height: 80px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 10px 20px !important;
-  text-align: center !important;
-  height: auto !important;
-}
-
-.scenario-btn .nb-card-title {
-  margin: 0 !important;
-  pointer-events: none;
-}
 
 .details .nb-card-content {
   display: flex;
