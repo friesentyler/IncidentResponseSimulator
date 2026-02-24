@@ -5,11 +5,13 @@ import django.contrib.auth
 from IncidentResponseSimulator.users.serializers import UserSerializer
 from rest_framework import generics
 from django.contrib.auth.models import User
+from rest_framework import permissions
+from rest_framework import viewsets
 
-class UserList(generics.ListAPIView):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This viewset automatically provides `list` and `retrieve` actions.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
