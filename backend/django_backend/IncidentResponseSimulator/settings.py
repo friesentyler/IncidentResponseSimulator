@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(Path(__file__).resolve().parent.parent.parent, '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'IncidentResponseSimulator.register',
+    'IncidentResponseSimulator.payments',
 ]
 
 REST_FRAMEWORK = {
@@ -138,3 +142,8 @@ CORS_ALLOWED_ORIGINS = os.getenv(
 # Default to primary origin if only one is provided without comma
 if not isinstance(CORS_ALLOWED_ORIGINS, list):
     CORS_ALLOWED_ORIGINS = [CORS_ALLOWED_ORIGINS]
+
+# Stripe Configuration
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_PRODUCT_ID = os.getenv('STRIPE_PRODUCT_ID', '')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')

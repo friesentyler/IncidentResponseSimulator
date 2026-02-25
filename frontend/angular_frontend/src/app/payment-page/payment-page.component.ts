@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
 import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-payment-page',
@@ -12,6 +14,8 @@ import { environment } from '../../environments/environment';
 })
 export class PaymentPageComponent implements OnInit, OnDestroy {
   @ViewChild('cardElement') cardElementRef!: ElementRef;
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
   stripe: Stripe | null = null;
   elements: StripeElements | null = null;
@@ -19,6 +23,9 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   cardError: string | null = null;
   loading = false;
   success = false;
+
+  planPrice = 19.99;
+  planName = 'Incident Response Simulator Subscription';
 
   // Stripe Publishable Key is sourced from src/environments/environment.ts
   private readonly STRIPE_PUBLISHABLE_KEY = environment.stripePublishableKey;
@@ -63,14 +70,27 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       card: this.card,
     });
 
-    this.loading = false;
-
     if (error) {
       this.cardError = error.message ?? 'An unknown error occurred';
+      this.loading = false;
     } else {
-      this.success = true;
       console.log('Payment Method Created:', paymentMethod);
-      // TODO: Send paymentMethod.id to your server to complete the payment
+      this.http.post(`${environment.apiUrl}payments/create-subscription/`, {
+        payment_method_id: paymentMethod.id
+      }).subscribe({
+        next: (res) => {
+          this.success = true;
+          this.loading = false;
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 2000);
+        },
+        error: (err) => {
+          console.error('Subscription creation failed', err);
+          this.cardError = err.error?.error || 'Failed to create subscription. Please try again.';
+          this.loading = false;
+        }
+      });
     }
   }
 }

@@ -3,6 +3,11 @@
         <h1 class="title">Complete Your Registration</h1>
         <p class="subtitle">Secure your account with a payment method.</p>
 
+        <div class="pricing-info" *ngIf="!success">
+            <h2 class="price">${{ planPrice }} <span>/ month</span></h2>
+            <p class="plan-details">{{ planName }}</p>
+        </div>
+
         <form (submit)="handlePayment($event)" *ngIf="!success">
             <div class="form-group">
                 <label for="card-element">Credit or debit card</label>
