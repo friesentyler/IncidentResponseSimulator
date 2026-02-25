@@ -1,6 +1,12 @@
 <div class="card-container">
     <div class="nb-card">
         <div class="nb-card-content">
+            @if (loginSuccess) {
+            <div class="success-message">
+                <h4 class="nb-card-title">Welcome back!</h4>
+                <p>Login successful. Redirecting you now...</p>
+            </div>
+            } @else {
             <h4 class="nb-card-title">{{ cardTitle }}</h4>
             <p class="nb-card-text">{{ cardText }}
                 <a routerLink="/register" routerLinkActive="active" class="register-link">register</a>
@@ -38,6 +44,7 @@
                     <button class="nb-button blue" type="submit">Login</button>
                 </div>
             </form>
+            }
         </div>
     </div>
 </div>

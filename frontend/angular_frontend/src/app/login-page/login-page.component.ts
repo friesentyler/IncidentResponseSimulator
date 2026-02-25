@@ -18,6 +18,7 @@ export class LoginPageComponent {
     cardText: string = 'Enter your username below to login to your account. If you don\'t have an account yet';
     submitted = false;
     loginError: string | null = null;
+    loginSuccess = false;
 
     loginForm: FormGroup = this.fb.group({
         username: ['', [Validators.required]],
@@ -30,7 +31,10 @@ export class LoginPageComponent {
         if (this.loginForm.valid) {
             this.authService.login(this.loginForm.value).subscribe({
                 next: () => {
-                    this.router.navigate(['/']); // Redirect to home/dashboard
+                    this.loginSuccess = true;
+                    setTimeout(() => {
+                        this.router.navigate(['/']);
+                    }, 3000);
                 },
                 error: (err) => {
                     console.error('Login failed', err);
