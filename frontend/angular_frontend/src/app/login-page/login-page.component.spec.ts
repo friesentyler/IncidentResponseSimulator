@@ -138,4 +138,31 @@ describe('LoginPageComponent', () => {
         expect(errorMsg).toBeTruthy();
         expect(errorMsg.textContent).toContain('Invalid username or password');
     })
+
+    it('should show success message after successful login', () => {
+        spyOn(authService, 'login').and.returnValue(of({ access: 'abc', refresh: 'def' }));
+
+        const usernameField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#username');
+        const passwordField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#password');
+
+        usernameField.value = 'user123';
+        usernameField.dispatchEvent(new Event('input'));
+        passwordField.value = 'securePassword';
+        passwordField.dispatchEvent(new Event('input'));
+
+        fixture.detectChanges();
+
+        const button: HTMLButtonElement = fixture.debugElement.nativeElement.querySelector('.nb-button.blue');
+        button.click();
+
+        fixture.detectChanges();
+
+        const successMsg = fixture.debugElement.nativeElement.querySelector('.success-message');
+        expect(successMsg).toBeTruthy();
+        expect(successMsg.textContent).toContain('Welcome back!');
+
+        // Form should be hidden
+        const form = fixture.debugElement.nativeElement.querySelector('form');
+        expect(form).toBeNull();
+    })
 });

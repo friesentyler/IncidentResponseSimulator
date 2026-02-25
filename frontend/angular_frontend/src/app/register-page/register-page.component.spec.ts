@@ -153,4 +153,21 @@ describe('RegisterPageComponent', () => {
     button.click();
     expect(component.onSubmit).toHaveBeenCalled();
   })
+
+  it('should display register error message when registerError is set', () => {
+    component.registerError = 'Username already exists';
+    fixture.detectChanges();
+
+    const errorMsg = fixture.debugElement.nativeElement.querySelector('.error-message.global-error');
+    expect(errorMsg).toBeTruthy();
+    expect(errorMsg.textContent).toContain('Username already exists');
+  })
+
+  it('should not display register error message when registerError is null', () => {
+    component.registerError = null;
+    fixture.detectChanges();
+
+    const errorMsg = fixture.debugElement.nativeElement.querySelector('.error-message.global-error');
+    expect(errorMsg).toBeNull();
+  })
 });
