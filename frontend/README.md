@@ -6,3 +6,4 @@ to run Angular application
 
 to run Angular tests
 ```ng test```
+```npm test -- --watch=false --browsers=ChromeHeadless```

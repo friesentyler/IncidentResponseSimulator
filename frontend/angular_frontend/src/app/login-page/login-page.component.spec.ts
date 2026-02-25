@@ -1,24 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { LoginPageComponent } from './login-page.component';
+import { AuthService } from '../services/auth.service';
+import { of, throwError } from 'rxjs';
 
 describe('LoginPageComponent', () => {
     let component: LoginPageComponent;
     let fixture: ComponentFixture<LoginPageComponent>;
+    let authService: AuthService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [LoginPageComponent],
             providers: [
                 provideRouter([]),
-                provideHttpClient()
+                provideHttpClient(),
+                provideHttpClientTesting(),
+                AuthService
             ],
         })
             .compileComponents();
 
         fixture = TestBed.createComponent(LoginPageComponent);
         component = fixture.componentInstance;
+        authService = TestBed.inject(AuthService);
         fixture.detectChanges();
     });
 
@@ -26,13 +33,13 @@ describe('LoginPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // test valid email and password combo and that the error messages don't appear
-    it('should not error out on valid email and valid password', () => {
-        const emailField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#email');
+    // test valid username and password combo and that the error messages don't appear
+    it('should not error out on valid username and valid password', () => {
+        const usernameField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#username');
         const passwordField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#password');
 
-        emailField.value = 'john.doe@example.com';
-        emailField.dispatchEvent(new Event('input'));
+        usernameField.value = 'john.doe';
+        usernameField.dispatchEvent(new Event('input'));
 
         passwordField.value = 'password123';
         passwordField.dispatchEvent(new Event('input'));
@@ -44,19 +51,17 @@ describe('LoginPageComponent', () => {
 
         fixture.detectChanges();
 
-        const emailReq = fixture.debugElement.nativeElement.querySelector('#email-req');
-        const emailFormatReq = fixture.debugElement.nativeElement.querySelector('#email-format-req');
+        const usernameReq = fixture.debugElement.nativeElement.querySelector('#username-req');
         const passwordReq = fixture.debugElement.nativeElement.querySelector('#password-req');
 
-        expect(emailReq).toBeNull();
-        expect(emailFormatReq).toBeNull();
+        expect(usernameReq).toBeNull();
         expect(passwordReq).toBeNull();
     })
 
-    it('should error out on empty email', () => {
-        const emailField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#email');
-        emailField.value = '';
-        emailField.dispatchEvent(new Event('input'));
+    it('should error out on empty username', () => {
+        const usernameField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#username');
+        usernameField.value = '';
+        usernameField.dispatchEvent(new Event('input'));
 
         fixture.detectChanges();
 
@@ -65,24 +70,8 @@ describe('LoginPageComponent', () => {
 
         fixture.detectChanges();
 
-        const emailReq = fixture.debugElement.nativeElement.querySelector('#email-req');
-        expect(emailReq).toBeTruthy();
-    })
-
-    it('should error out on invalid email format', () => {
-        const emailField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#email');
-        emailField.value = 'invalid-email';
-        emailField.dispatchEvent(new Event('input'));
-
-        fixture.detectChanges();
-
-        const button: HTMLButtonElement = fixture.debugElement.nativeElement.querySelector('.nb-button.blue');
-        button.click();
-
-        fixture.detectChanges();
-
-        const emailFormatReq = fixture.debugElement.nativeElement.querySelector('#email-format-req');
-        expect(emailFormatReq).toBeTruthy();
+        const usernameReq = fixture.debugElement.nativeElement.querySelector('#username-req');
+        expect(usernameReq).toBeTruthy();
     })
 
     it('should error out on empty password', () => {
@@ -101,45 +90,21 @@ describe('LoginPageComponent', () => {
         expect(passwordReq).toBeTruthy();
     })
 
-    it('should error out on invalid email and empty password', () => {
-        const emailField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#email');
-        const passwordField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#password');
-
-        emailField.value = 'invalid';
-        emailField.dispatchEvent(new Event('input'));
-
-        passwordField.value = '';
-        passwordField.dispatchEvent(new Event('input'));
-
-        fixture.detectChanges();
-
-        const button: HTMLButtonElement = fixture.debugElement.nativeElement.querySelector('.nb-button.blue');
-        button.click();
-
-        fixture.detectChanges();
-
-        const emailFormatReq = fixture.debugElement.nativeElement.querySelector('#email-format-req');
-        const passwordReq = fixture.debugElement.nativeElement.querySelector('#password-req');
-
-        expect(emailFormatReq).toBeTruthy();
-        expect(passwordReq).toBeTruthy();
-    })
-
     // test that register link exists and has correct routerLink
     it('should have a link to the register page', () => {
         const registerLink: HTMLAnchorElement = fixture.debugElement.nativeElement.querySelector('.register-link');
         expect(registerLink.getAttribute('routerLink')).toBe('/register');
     })
 
-    // test that login button works
-    it('should submit form properly on click login button', () => {
-        spyOn(component, 'onSubmit');
+    // test that login button calls AuthService.login
+    it('should call AuthService.login on submit', () => {
+        spyOn(authService, 'login').and.returnValue(of({ access: 'abc', refresh: 'def' }));
 
-        const emailField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#email');
+        const usernameField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#username');
         const passwordField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#password');
 
-        emailField.value = 'user@example.com';
-        emailField.dispatchEvent(new Event('input'));
+        usernameField.value = 'user123';
+        usernameField.dispatchEvent(new Event('input'));
         passwordField.value = 'securePassword';
         passwordField.dispatchEvent(new Event('input'));
 
@@ -148,6 +113,29 @@ describe('LoginPageComponent', () => {
         const button: HTMLButtonElement = fixture.debugElement.nativeElement.querySelector('.nb-button.blue');
         button.click();
 
-        expect(component.onSubmit).toHaveBeenCalled();
+        expect(authService.login).toHaveBeenCalled();
+    })
+
+    it('should display error message on login failure', () => {
+        spyOn(authService, 'login').and.returnValue(throwError(() => new Error('Login failed')));
+
+        const usernameField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#username');
+        const passwordField: HTMLInputElement = fixture.debugElement.nativeElement.querySelector('#password');
+
+        usernameField.value = 'user123';
+        usernameField.dispatchEvent(new Event('input'));
+        passwordField.value = 'wrongPassword';
+        passwordField.dispatchEvent(new Event('input'));
+
+        fixture.detectChanges();
+
+        const button: HTMLButtonElement = fixture.debugElement.nativeElement.querySelector('.nb-button.blue');
+        button.click();
+
+        fixture.detectChanges();
+
+        const errorMsg = fixture.debugElement.nativeElement.querySelector('.error-message.global-error');
+        expect(errorMsg).toBeTruthy();
+        expect(errorMsg.textContent).toContain('Invalid username or password');
     })
 });
