@@ -14,3 +14,9 @@ To install required dependencies
 
 Run the Django development server
 ```python manage.py runserver```
+
+Run the Django tests
+```python manage.py test```
+
+If using Neovim make sure to activate venv before opening nvim otherwise you will end up with lots of import errors
+in the editor.
