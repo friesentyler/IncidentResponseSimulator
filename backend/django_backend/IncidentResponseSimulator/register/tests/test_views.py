@@ -9,7 +9,7 @@ class RegisterViewTest(APITestCase):
         self.user_data = {
             "username": "testuser",
             "email": "test@example.com",
-            "password": "testpassword123"
+            "password": "TestPassword123!"
         }
 
     def test_register_user_success(self):
@@ -22,7 +22,16 @@ class RegisterViewTest(APITestCase):
         data = {"username": "testuser"}
         response = self.client.post(self.register_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("password", response.data)
+        self.assertIn("email", response.data)
         self.assertEqual(User.objects.count(), 0)
+
+    def test_register_user_fail_weak_password(self):
+        data = self.user_data.copy()
+        data["password"] = "weak"
+        response = self.client.post(self.register_url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("password", response.data)
 
     def test_register_user_fail_duplicate_username(self):
         User.objects.create_user(**self.user_data)

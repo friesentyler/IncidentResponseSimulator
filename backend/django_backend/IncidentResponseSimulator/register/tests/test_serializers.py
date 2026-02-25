@@ -7,12 +7,12 @@ class RegisterSerializerTest(TestCase):
         self.user_data = {
             "username": "testuser",
             "email": "test@example.com",
-            "password": "testpassword123"
+            "password": "TestPassword123!"
         }
 
     def test_serializer_with_valid_data(self):
         serializer = RegisterSerializer(data=self.user_data)
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), serializer.errors)
         user = serializer.save()
         self.assertEqual(user.username, self.user_data["username"])
         self.assertEqual(user.email, self.user_data["email"])
@@ -23,6 +23,25 @@ class RegisterSerializerTest(TestCase):
         serializer = RegisterSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertIn("password", serializer.errors)
+        self.assertIn("email", serializer.errors)
+
+    def test_serializer_with_weak_password(self):
+        # Too short
+        data = self.user_data.copy()
+        data["password"] = "Short1!"
+        serializer = RegisterSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("password", serializer.errors)
+
+        # No uppercase
+        data["password"] = "lowercase123!"
+        serializer = RegisterSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
+
+        # No number
+        data["password"] = "NoNumber!!!"
+        serializer = RegisterSerializer(data=data)
+        self.assertFalse(serializer.is_valid())
 
     def test_serializer_with_duplicate_username(self):
         User.objects.create_user(**self.user_data)
