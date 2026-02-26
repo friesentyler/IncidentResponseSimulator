@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ElementRef } from '@angular/core';
 
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('PaymentPageComponent', () => {
   let component: PaymentPageComponent;
@@ -13,7 +14,10 @@ describe('PaymentPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PaymentPageComponent, NavbarComponent, CommonModule],
-      providers: [provideRouter([])]
+      providers: [
+        provideRouter([]),
+        provideHttpClient()
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(PaymentPageComponent);

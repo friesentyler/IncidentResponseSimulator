@@ -6,6 +6,21 @@
         <a routerLink="/login" routerLinkActive="active" class="login-link">login</a>
       </p>
       <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
+        @if (registerError) {
+        <div class="error-message global-error">
+          {{ registerError }}
+        </div>
+        }
+        <div class="input-group">
+          <input id="username" formControlName="username" class="nb-input blue" placeholder="Username" type="text" />
+          @if (submitted && registrationForm.get('username')?.errors) {
+          <div class="error-message">
+            @if (registrationForm.get('username')?.errors?.['required']) { <div id="username-req">Username is required
+            </div> }
+          </div>
+          }
+        </div>
+
         <div class="input-group">
           <input id="email" formControlName="email" class="nb-input blue" placeholder="Email" type="email" />
           @if (submitted && registrationForm.get('email')?.errors) {
