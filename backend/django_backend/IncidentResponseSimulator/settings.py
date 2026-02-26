@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'IncidentResponseSimulator.register',
     'IncidentResponseSimulator.payments',
+    'IncidentResponseSimulator.scenarios',
 ]
 
 REST_FRAMEWORK = {
