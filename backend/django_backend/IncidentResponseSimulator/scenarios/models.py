@@ -20,3 +20,7 @@ class ScenarioModel(models.Model):
 
     class Meta:
         verbose_name = 'Scenario'
+        verbose_name_plural = 'Scenarios'
+
+    def __str__(self):
+        return f"{self.scenario_name} - {self.scenario_status}"
