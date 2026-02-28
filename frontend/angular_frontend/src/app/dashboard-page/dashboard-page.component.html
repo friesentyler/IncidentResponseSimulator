@@ -3,27 +3,19 @@
     <div class="nb-card scenarios">
       <div class="nb-card-content scenarios">
         <div class="card-container">
-          <app-scenario-button [scenarioName]="'Data Breach Investigation'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Phishing Campaign Response'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Ransomware Mitigation'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Insider Threat Detection'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'SQL Injection Prevention'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'DDoS Attack Defense'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Unauthorized Access Audit'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Cloud Security Misconfiguration'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'API Vulnerability Scan'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Social Engineering Test'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Zero-Day Exploit Response'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Malware Sandboxing Analysis'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Network Intrusion Forensics'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Credential Stuffing Defense'"></app-scenario-button>
-          <app-scenario-button [scenarioName]="'Compliance Audit Prep'"></app-scenario-button>
+          @for (scenario of scenarios(); track scenario.id) {
+          <app-scenario-button [scenarioName]="scenario.scenario_name" (click)="selectScenario(scenario)">
+          </app-scenario-button>
+          }
         </div>
       </div>
     </div>
   </div>
 
   <div class="card-container content-area">
-    <app-scenario-details></app-scenario-details>
+    <app-scenario-details [scenarioTitle]="selectedScenario()?.scenario_name || 'Scenario Details'"
+      [scenarioDescription]="selectedScenario()?.scenario_description || 'Select a scenario from the left to view details and start the interactive simulation or test your knowledge with a quiz.'"
+      [scenarioStatus]="selectedScenario()?.scenario_status" (launch)="launchScenario()">
+    </app-scenario-details>
   </div>
 </div>

@@ -81,24 +81,45 @@
 }
 
 .nb-button.green,
-.nb-button.blue {
+.nb-button.blue,
+.nb-button.orange {
   flex: 1;
   max-width: 350px;
-  /* Even larger max-width */
   min-width: 200px;
-  /* Larger min-width */
   padding: 25px 40px;
-  /* Even more padding */
   font-size: 1.4rem;
-  /* Larger font-size */
   font-weight: 800;
-  /* Bolder weight */
 }
 
-.nb-button.green {
-  background-color: #2ecc71;
+/* Spinner and Status Styles */
+.scenario-details-body {
+  position: relative;
+  margin: 20px 0;
+  flex: 1;
 }
 
-.nb-button.blue {
-  background-color: #3498db;
+.dimmed {
+  opacity: 0.3;
+  filter: blur(1px);
+  transition: all 0.3s ease;
+}
+
+.status-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.status-text {
+  font-family: 'Public Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
