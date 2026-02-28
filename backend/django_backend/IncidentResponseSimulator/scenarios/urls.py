@@ -1,6 +1,10 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'scenarios', views.ScenarioViewSet, basename='scenarios')
 
 urlpatterns = [
-    path('scenarios/', views.ScenarioViewSet.as_view({'get': 'list'}), name='scenarios'),
+    path('', include(router.urls)),
 ]
