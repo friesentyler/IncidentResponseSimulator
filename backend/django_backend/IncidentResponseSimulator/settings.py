@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'IncidentResponseSimulator.register',
     'IncidentResponseSimulator.payments',
+    'IncidentResponseSimulator.scenarios',
 ]
 
 REST_FRAMEWORK = {
@@ -147,3 +148,18 @@ if not isinstance(CORS_ALLOWED_ORIGINS, list):
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
 STRIPE_PRODUCT_ID = os.getenv('STRIPE_PRODUCT_ID', '')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+

@@ -3,6 +3,8 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { PaymentPageComponent } from './payment-page/payment-page.component';
+import { DashboardPageComponent } from './dashboard-page/dashboard-page.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -24,5 +26,11 @@ export const routes: Routes = [
     path: 'payment',
     component: PaymentPageComponent,
     title: 'Payment Page',
+  },
+  {
+    path: 'dashboard',
+    component: DashboardPageComponent,
+    title: 'Dashboard Page',
+    canActivate: [authGuard]
   }
 ];

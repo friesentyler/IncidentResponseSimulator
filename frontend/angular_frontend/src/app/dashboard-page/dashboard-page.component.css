@@ -1,0 +1,78 @@
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 2fr;
+  height: 100%;
+  width: 100%;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Overriding library media queries to ensure grid stability */
+.dashboard-grid .card-container,
+.dashboard-grid .nb-card {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  display: block !important;
+  margin: 0 !important;
+}
+
+.nb-card.scenarios:hover {
+  transform: none;
+  box-shadow: 8px 8px 0px #000;
+}
+
+
+.sidebar {
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: 0 15px 15px 0;
+  /* Symmetrical padding: only right and bottom for shadow */
+  box-sizing: border-box;
+  min-width: 275px;
+}
+
+.sidebar .card-container {
+  display: flex !important;
+  /* Force flexbox to enable gap */
+  flex-direction: column !important;
+  gap: 20px;
+  /* Increased spacing between scenario cards */
+  padding-bottom: 30px;
+  /* Even more room for the last shadow */
+  height: auto !important;
+  /* Allow container to grow within scrollable sidebar */
+}
+
+/* Explicitly override the broad grid height rule for individual scenario cards */
+.sidebar .nb-card {
+  height: auto !important;
+  margin-bottom: 0 !important;
+}
+
+.content-area {
+  height: 100%;
+  overflow: visible;
+  padding: 0 0 15px 15px;
+  /* Match sidebar padding for symmetrical alignment */
+  box-sizing: border-box;
+}
+
+.dashboard-grid .nb-card.scenarios {
+  background-color: yellow;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0 !important;
+}
+
+.nb-card-content.scenarios {
+  overflow-y: auto !important;
+  padding: 10px 25px;
+  /* Internal padding for scrollbar space */
+  flex: 1;
+  min-height: 0;
+  /* Ensures flex item can shrink to allow scrolling */
+}

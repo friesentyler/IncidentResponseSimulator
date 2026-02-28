@@ -1,0 +1,21 @@
+<div class="dashboard-grid">
+  <div class="card-container sidebar">
+    <div class="nb-card scenarios">
+      <div class="nb-card-content scenarios">
+        <div class="card-container">
+          @for (scenario of scenarios(); track scenario.id) {
+          <app-scenario-button [scenarioName]="scenario.scenario_name" (click)="selectScenario(scenario)">
+          </app-scenario-button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-container content-area">
+    <app-scenario-details [scenarioTitle]="selectedScenario()?.scenario_name || 'Scenario Details'"
+      [scenarioDescription]="selectedScenario()?.scenario_description || 'Select a scenario from the left to view details and start the interactive simulation or test your knowledge with a quiz.'"
+      [scenarioStatus]="selectedScenario()?.scenario_status" (launch)="launchScenario()">
+    </app-scenario-details>
+  </div>
+</div>

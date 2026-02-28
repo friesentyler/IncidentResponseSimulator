@@ -1,0 +1,20 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.scenario-btn {
+    width: 100% !important;
+    min-height: 80px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px 20px !important;
+    text-align: center !important;
+    height: auto !important;
+}
+
+.scenario-btn .nb-card-title {
+    margin: 0 !important;
+    pointer-events: none;
+}
