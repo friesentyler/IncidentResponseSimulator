@@ -81,7 +81,7 @@ jobs:
               cd backend/django_backend
 
               echo "🔐 Writing .env file"
-              cat > .env <<EOL
+              cat > .env <<-EOL
               STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
               STRIPE_PRODUCT_ID=${{ secrets.STRIPE_PRODUCT_ID }}
               EXECUTION_SERVICE_URL=${{ secrets.EXECUTION_SERVICE_URL }}
