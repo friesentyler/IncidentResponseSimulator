@@ -35,6 +35,9 @@ jobs:
 
       - name: Bring up WireGuard
         run: sudo wg-quick up wg0
+            ip addr show wg0
+            ip route show
+            nc -vz ${{ secrets.SSH_HOST }} 22 || echo "TCP to SSH port failed"
 
       - name: Add SSH host to known_hosts
         run: |
