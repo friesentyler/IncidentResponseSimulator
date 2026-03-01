@@ -24,11 +24,11 @@ jobs:
           sudo bash -c 'cat > /etc/wireguard/wg0.conf <<EOF
           [Interface]
           PrivateKey = ${{ secrets.WG_PRIVATE_KEY }}
-          Address = 10.0.0.10/24
+          Address = 10.8.0.6/24
 
           [Peer]
           PublicKey = ${{ secrets.WG_SERVER_PUBLIC_KEY }}
-          AllowedIPs = 10.0.0.0/16
+          AllowedIPs = 10.10.0.0/16
           Endpoint = ${{ secrets.WG_ENDPOINT }}
           PersistentKeepalive = 25
           EOF'
