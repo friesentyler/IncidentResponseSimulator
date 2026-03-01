@@ -54,69 +54,68 @@ jobs:
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           echo "Connected successfully!"
 
-              set -e
+          set -e
 
-              echo "🚀 Starting test deployment"
+          echo "🚀 Starting test deployment"
 
-              cd ~
+          cd ~
 
-              if [ ! -d "IncidentResponseSimulator/.git" ]; then
-                echo "📦 Cloning repository for first time"
-                git clone https://github.com/friesentyler/IncidentResponseSimulator.git
-              fi
+          if [ ! -d "IncidentResponseSimulator/.git" ]; then
+            echo "📦 Cloning repository for first time"
+            git clone https://github.com/friesentyler/IncidentResponseSimulator.git
+          fi
 
-              cd IncidentResponseSimulator
+          cd IncidentResponseSimulator
 
-              echo "📌 Killing previous servers (if any)"
-              pkill -f "manage.py runserver" || true
-              pkill -f "ng serve" || true
+          echo "📌 Killing previous servers (if any)"
+          pkill -f "manage.py runserver" || true
+          pkill -f "ng serve" || true
 
-              echo "📥 Pulling latest code"
-              git fetch origin
-              git reset --hard origin/master
+          echo "📥 Pulling latest code"
+          git fetch origin
+          git reset --hard origin/master
 
-              ###################################
-              # BACKEND (Django)
-              ###################################
-              cd backend/django_backend
+          ###################################
+          # BACKEND (Django)
+          ###################################
+          cd backend/django_backend
 
-              echo "🔐 Writing .env file"
-              cat > .env <<-EOL
-              STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
-              STRIPE_PRODUCT_ID=${{ secrets.STRIPE_PRODUCT_ID }}
-              EXECUTION_SERVICE_URL=${{ secrets.EXECUTION_SERVICE_URL }}
-              EOL
+          echo "🔐 Writing .env file"
+          cat > .env <<-EOL
+          STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_PRODUCT_ID=${{ secrets.STRIPE_PRODUCT_ID }}
+          EXECUTION_SERVICE_URL=${{ secrets.EXECUTION_SERVICE_URL }}
+          EOL
 
-              echo "🐍 Setting up virtualenv"
-              python3 -m venv venv || true
-              source venv/bin/activate
-              pip install --upgrade pip
-              pip install -r requirements.txt
+          echo "🐍 Setting up virtualenv"
+          python3 -m venv venv || true
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-              echo "🏃 Running Django server in background"
-              nohup python manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
+          echo "🏃 Running Django server in background"
+          nohup python manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
 
-              ###################################
-              # FRONTEND (Angular)
-              ###################################
-              cd ../../frontend/angular_frontend
+          ###################################
+          # FRONTEND (Angular)
+          ###################################
+          cd ../../frontend/angular_frontend
 
-              echo "📦 Installing frontend dependencies"
-              npm install
+          echo "📦 Installing frontend dependencies"
+          npm install
 
-              echo "🔧 Creating Angular environment file dynamically"
-              mkdir -p src/environments
-              cat > src/environments/environment.ts <<EOL
-              export const environment = {
-                production: false,
-                apiUrl: 'http://127.0.0.1:8000/api/',
-                stripePublishableKey: '${{ secrets.STRIPE_PUBLISHABLE_KEY }}'
-              };
-              EOL
+          echo "🔧 Creating Angular environment file dynamically"
+          mkdir -p src/environments
+          cat > src/environments/environment.ts <<EOL
+          export const environment = {
+            production: false,
+            apiUrl: 'http://127.0.0.1:8000/api/',
+            stripePublishableKey: '${{ secrets.STRIPE_PUBLISHABLE_KEY }}'
+          };
+          EOL
 
-              echo "🏃 Running Angular server in background"
-              nohup ng serve --host 0.0.0.0 --port 4200 > angular.log 2>&1 &
+          echo "🏃 Running Angular server in background"
+          nohup ng serve --host 0.0.0.0 --port 4200 > angular.log 2>&1 &
 
-              echo "✅ Test deployment started and previous servers killed"
-
+          echo "✅ Test deployment started and previous servers killed"
           EOF
