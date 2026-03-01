@@ -39,7 +39,8 @@ jobs:
       - name: Add SSH host to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          sleep 2
+          ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts || true
 
       - name: Test deploy Django + Angular
         run: |
