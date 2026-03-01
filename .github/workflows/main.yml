@@ -60,6 +60,13 @@ jobs:
 
               cd ~
 
+              if [ ! -d "your-project-folder/.git" ]; then
+                echo "📦 Cloning repository for first time"
+                git clone https://github.com/friesentyler/IncidentResponseSimulator.git
+              fi
+
+              cd IncidentResponseSimulator
+
               echo "📌 Killing previous servers (if any)"
               pkill -f "manage.py runserver" || true
               pkill -f "ng serve" || true
