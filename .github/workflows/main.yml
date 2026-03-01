@@ -58,7 +58,7 @@ jobs:
 
               echo "🚀 Starting test deployment"
 
-              cd /var/www/IncidentResponseSimulator
+              cd ~
 
               echo "📌 Killing previous servers (if any)"
               pkill -f "manage.py runserver" || true
