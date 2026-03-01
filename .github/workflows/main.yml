@@ -3,7 +3,7 @@ name: Test Deploy Django + Angular over WireGuard
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
