@@ -60,7 +60,7 @@ jobs:
 
               cd ~
 
-              if [ ! -d "your-project-folder/.git" ]; then
+              if [ ! -d "IncidentResponseSimulator/.git" ]; then
                 echo "📦 Cloning repository for first time"
                 git clone https://github.com/friesentyler/IncidentResponseSimulator.git
               fi
