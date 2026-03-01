@@ -44,9 +44,10 @@ jobs:
 
       - name: Test deploy Django + Angular
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -T \
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
             -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          echo "Connected successfully!"
 
               set -e
 
