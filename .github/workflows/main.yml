@@ -78,7 +78,7 @@ jobs:
           ###################################
           # BACKEND (Django)
           ###################################
-          cd backend/django_backend
+          cd backend
 
           echo "🔐 Writing .env file"
           cat > .env <<-EOL
@@ -88,13 +88,13 @@ jobs:
           EOL
 
           echo "🐍 Setting up virtualenv"
-          python3 -m venv venv || true
+          python3.14 -m venv venv || true
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
 
           echo "🏃 Running Django server in background"
-          nohup python manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
+          nohup python django_backend/manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
 
           ###################################
           # FRONTEND (Angular)
