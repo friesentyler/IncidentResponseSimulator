@@ -1,12 +1,16 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.exceptions import ValidationError
 from .models import ScenarioModel
 from .serializers import ScenarioSerializer
+from .views import ScenarioViewSet
 import time
+from unittest.mock import patch
+import requests
 
 class ScenarioModelTest(TestCase):
     def test_scenario_creation_and_str(self):
@@ -95,3 +99,56 @@ class ScenarioAPITest(TestCase):
         # but the logic in ViewSet uses threading.Thread which runs alongside tests)
         # Note: In Django TestCase, everything is wrapped in a transaction which can sometimes
         # interfere with background threads seeing changes.
+
+    @patch('IncidentResponseSimulator.scenarios.views.requests.post')
+    def test_run_vm_operation_start(self, mock_post):
+        """Test the background VM operation for starting a scenario."""
+        # Setup the mock response
+        mock_response = patch('requests.models.Response').start()
+        mock_response.json.return_value = {"status": "success", "stdout": "Test output"}
+        mock_post.return_value = mock_response
+
+        viewset = ScenarioViewSet()
+        
+        # Call it synchronously for testing
+        viewset._run_vm_operation(self.scenario.id, 'loading')
+
+        # Verify Execution Service was called correctly
+        mock_post.assert_called_once_with(
+            f"{settings.EXECUTION_SERVICE_URL}/run-scenario",
+            json={"scenario_id": str(self.scenario.id), "action": "start"},
+            timeout=45
+        )
+
+        # Verify DB was updated
+        self.scenario.refresh_from_db()
+        self.assertEqual(self.scenario.scenario_status, 'active')
+
+    @patch('IncidentResponseSimulator.scenarios.views.requests.post')
+    def test_run_vm_operation_stop(self, mock_post):
+        """Test the background VM operation for stopping a scenario."""
+        # Set initial state to active
+        self.scenario.scenario_status = 'active'
+        self.scenario.save()
+
+        # Setup the mock response
+        mock_response = patch('requests.models.Response').start()
+        mock_response.json.return_value = {"status": "success", "stdout": "Teardown output"}
+        mock_post.return_value = mock_response
+
+        viewset = ScenarioViewSet()
+        
+        # Call it synchronously for testing
+        viewset._run_vm_operation(self.scenario.id, 'resetting')
+
+        # Verify Execution Service was called correctly
+        mock_post.assert_called_once_with(
+            f"{settings.EXECUTION_SERVICE_URL}/run-scenario",
+            json={"scenario_id": str(self.scenario.id), "action": "stop"},
+            timeout=45
+        )
+
+        # Verify DB was updated
+        self.scenario.refresh_from_db()
+        self.assertEqual(self.scenario.scenario_status, 'inactive')
+
