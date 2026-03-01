@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.conf import settings
 from rest_framework import viewsets
 from .models import ScenarioModel
 from .serializers import ScenarioSerializer
@@ -6,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 import threading
+import requests 
 import time
 import logging
 
@@ -32,8 +34,10 @@ class ScenarioViewSet(viewsets.ModelViewSet):
 
     def _run_vm_operation(self, scenario_id, target_status):
         """
-        Simulates a long-running VM operation in the background.
+        Simulates a long-running VM operation in the background by calling
+        the execution-service microservice.
         """
+
         try:
             # Determine the final state based on the transition
             # loading -> active
@@ -42,17 +46,43 @@ class ScenarioViewSet(viewsets.ModelViewSet):
             
             logger.info(f"Background thread starting for scenario {scenario_id}: {target_status} -> {final_status}")
             
-            # Simulate the 90-second spin-up/tear-down
-            # For testing purposes, we might want to keep this shorter, 
-            # but I'll set it to 10 seconds for a visible but quick demonstration.
-            time.sleep(10) 
+            # Determine action based on target status
+            action = 'start' if target_status == 'loading' else 'stop'
 
-            # Update the database. We use .filter().update() to avoid 
-            # conflicts with other threads/processes if possible.
-            ScenarioModel.objects.filter(id=scenario_id).update(scenario_status=final_status)
+            # Make the HTTP request to the Flask execution service
+            execution_url = f"{settings.EXECUTION_SERVICE_URL}/run-scenario"
+            logger.info(f"Sending POST request to execution service at {execution_url} with action '{action}'...")
             
-            logger.info(f"Background thread finished for scenario {scenario_id}. Final status: {final_status}")
+            response = requests.post(
+                execution_url, 
+                json={
+                    "scenario_id": str(scenario_id),
+                    "action": action
+                },
+                timeout=45 # Provide a timeout slightly longer than the longest script (30s)
+            )
+
+            response.raise_for_status() # Raise HTTP errors
+            response_data = response.json()
             
+            if response_data.get('status') == 'success':
+                # Log the script output directly to the Django console
+                script_output = response_data.get('stdout', '')
+                if script_output:
+                    logger.info(f"\n--- Script Output for Scenario {scenario_id} ({action}) ---\n{script_output}\n-----------------------------------------")
+
+                # Update the database. We use .filter().update() to avoid 
+                # conflicts with other threads/processes if possible.
+                ScenarioModel.objects.filter(id=scenario_id).update(scenario_status=final_status)
+                logger.info(f"Background thread finished for scenario {scenario_id}. Final status: {final_status}")
+            else:
+                 logger.error(f"Execution service failed: {response_data}")
+                 ScenarioModel.objects.filter(id=scenario_id).update(scenario_status='inactive')
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"HTTP Error calling execution service for scenario {scenario_id}: {str(e)}")
+            ScenarioModel.objects.filter(id=scenario_id).update(scenario_status='inactive')
+
         except Exception as e:
             logger.error(f"Error in background VM operation for scenario {scenario_id}: {str(e)}")
             # If it fails, maybe revert to a safe state
