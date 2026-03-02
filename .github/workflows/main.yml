@@ -113,7 +113,7 @@ jobs:
           cat > src/environments/environment.ts <<EOL
           export const environment = {
             production: false,
-            apiUrl: 'http://127.0.0.1:8000/api/',
+            apiUrl: 'http://${{ secrets.SSH_HOST }}:8000/api/',
             stripePublishableKey: '${{ secrets.STRIPE_PUBLISHABLE_KEY }}'
           };
           EOL
