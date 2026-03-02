@@ -103,7 +103,7 @@ jobs:
           ###################################
           # FRONTEND (Angular)
           ###################################
-          cd ../../frontend/angular_frontend
+          cd ../frontend/angular_frontend
 
           echo "📦 Installing frontend dependencies"
           npm install
