@@ -140,6 +140,11 @@ CORS_ALLOWED_ORIGINS = os.getenv(
     'http://localhost:4200'
 ).split(',')
 
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+]
+
 # Default to primary origin if only one is provided without comma
 if not isinstance(CORS_ALLOWED_ORIGINS, list):
     CORS_ALLOWED_ORIGINS = [CORS_ALLOWED_ORIGINS]
