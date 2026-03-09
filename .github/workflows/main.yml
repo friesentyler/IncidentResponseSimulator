@@ -47,43 +47,62 @@ jobs:
           ip route show
           nc -vz ${{ secrets.SSH_HOST }} 22 || echo "TCP to SSH port failed"
 
-      - name: Add SSH host to known_hosts
+      - name: Add SSH hosts to known_hosts
         run: |
           mkdir -p ~/.ssh
           sleep 2
           ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts || true
+          ssh-keyscan 10.10.40.18 >> ~/.ssh/known_hosts || true
 
-      - name: Deploy Django + Angular
+      - name: Deploy Django + Angular (Web VM)
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
             -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           set -e
-          echo "🚀 Starting production deployment"
-
+          
           cd ~
-
           if [ ! -d "IncidentResponseSimulator/.git" ]; then
             echo "📦 Cloning repository for first time"
             git clone https://github.com/friesentyler/IncidentResponseSimulator.git
           fi
-
+          
           cd IncidentResponseSimulator
-
           echo "📥 Pulling latest code for branch: ${{ github.ref_name }}"
           git fetch origin
           git reset --hard origin/${{ github.ref_name }}
-
-          # Ensure deploy script is executable
           chmod +x deployment/deploy.sh
-
+          
           echo "🔐 Running deployment script"
-          # Pass secrets as environment variables to the script
           STRIPE_SECRET_KEY='${{ secrets.STRIPE_SECRET_KEY }}' \
           STRIPE_PRODUCT_ID='${{ secrets.STRIPE_PRODUCT_ID }}' \
           STRIPE_PUBLISHABLE_KEY='${{ secrets.STRIPE_PUBLISHABLE_KEY }}' \
-          EXECUTION_SERVICE_URL='${{ secrets.EXECUTION_SERVICE_URL }}' \
+          EXECUTION_SERVICE_URL='http://10.10.40.18:5001' \
           SSH_HOST='${{ secrets.SSH_HOST }}' \
           DEBUG=False \
           ./deployment/deploy.sh
+          EOF
+
+      - name: Deploy Execution Service (Attack VM)
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@10.10.40.18 << 'EOF'
+          set -e
+          echo "🚀 Deploying Execution Service to Attack VM"
+          
+          cd ~
+          if [ ! -d "IncidentResponseSimulator/.git" ]; then
+            echo "📦 Cloning repository for first time"
+            git clone https://github.com/friesentyler/IncidentResponseSimulator.git
+          fi
+          
+          cd IncidentResponseSimulator
+          echo "📥 Pulling latest code for branch: ${{ github.ref_name }}"
+          git fetch origin
+          git reset --hard origin/${{ github.ref_name }}
+          
+          chmod +x deployment/deploy_execution.sh
+          echo "🔐 Running execution deployment script"
+          ./deployment/deploy_execution.sh
           EOF
