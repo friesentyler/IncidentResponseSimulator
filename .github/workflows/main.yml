@@ -47,43 +47,80 @@ jobs:
           ip route show
           nc -vz ${{ secrets.SSH_HOST }} 22 || echo "TCP to SSH port failed"
 
-      - name: Add SSH host to known_hosts
+      - name: Add SSH hosts to known_hosts
         run: |
           mkdir -p ~/.ssh
           sleep 2
           ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts || true
+          ssh-keyscan 10.10.40.18 >> ~/.ssh/known_hosts || true
 
-      - name: Deploy Django + Angular
+      - name: Deploy Django + Angular (Web VM)
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
             -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           set -e
-          echo "🚀 Starting production deployment"
-
+          
           cd ~
-
           if [ ! -d "IncidentResponseSimulator/.git" ]; then
             echo "📦 Cloning repository for first time"
             git clone https://github.com/friesentyler/IncidentResponseSimulator.git
           fi
-
+          
           cd IncidentResponseSimulator
-
           echo "📥 Pulling latest code for branch: ${{ github.ref_name }}"
           git fetch origin
           git reset --hard origin/${{ github.ref_name }}
-
-          # Ensure deploy script is executable
           chmod +x deployment/deploy.sh
-
+          
           echo "🔐 Running deployment script"
-          # Pass secrets as environment variables to the script
           STRIPE_SECRET_KEY='${{ secrets.STRIPE_SECRET_KEY }}' \
           STRIPE_PRODUCT_ID='${{ secrets.STRIPE_PRODUCT_ID }}' \
           STRIPE_PUBLISHABLE_KEY='${{ secrets.STRIPE_PUBLISHABLE_KEY }}' \
-          EXECUTION_SERVICE_URL='${{ secrets.EXECUTION_SERVICE_URL }}' \
+          EXECUTION_SERVICE_URL='http://10.10.40.18:5001' \
           SSH_HOST='${{ secrets.SSH_HOST }}' \
           DEBUG=False \
           ./deployment/deploy.sh
+          EOF
+
+      - name: Deploy Execution Service (Attack VM)
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@10.10.40.18 << 'EOF'
+          set -e
+          echo "🚀 Configuring network for VPN compatibility"
+          # 1. Set MTU to 1200 (Extra conservative for double VPNs)
+          INTERFACE=$(ip route | grep default | awk '{print $5}' | head -n 1)
+          if [ -n "$INTERFACE" ]; then
+            echo "🔧 Setting MTU on $INTERFACE to 1200"
+            ip link set dev "$INTERFACE" mtu 1200 || echo "⚠️ Could not set MTU"
+          fi
+          
+          # 2. Add MSS Clamping
+          iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu || echo "⚠️ Could not set iptables MSS clamping"
+          
+          # 3. Git Optimizations for unstable networks
+          git config --global core.compression 0
+          git config --global http.postBuffer 524288000
+          git config --global http.maxRequestBuffer 524288000
+          git config --global pack.windowMemory 256m
+          git config --global pack.packSizeLimit 256m
+
+          echo "🚀 Deploying Execution Service to Attack VM"
+          cd ~
+          if [ ! -d "IncidentResponseSimulator/.git" ]; then
+            echo "📦 Cloning repository for first time"
+            export GIT_TERMINAL_PROMPT=0
+            git clone --depth 1 https://github.com/friesentyler/IncidentResponseSimulator.git
+          fi
+          
+          cd IncidentResponseSimulator
+          echo "📥 Pulling latest code for branch: ${{ github.ref_name }}"
+          git fetch --depth 1 origin ${{ github.ref_name }}
+          git reset --hard FETCH_HEAD
+          
+          chmod +x deployment/deploy_execution.sh
+          echo "🔐 Running execution deployment script"
+          ./deployment/deploy_execution.sh
           EOF
