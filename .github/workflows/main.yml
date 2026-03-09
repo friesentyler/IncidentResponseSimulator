@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -64,9 +65,9 @@ jobs:
 
           cd IncidentResponseSimulator
 
-          echo "📥 Pulling latest code"
+          echo "📥 Pulling latest code for branch: ${{ github.ref_name }}"
           git fetch origin
-          git reset --hard origin/master
+          git reset --hard origin/${{ github.ref_name }}
 
           # Ensure deploy script is executable
           chmod +x deployment/deploy.sh
