@@ -32,8 +32,10 @@ EOL
 # 2. Build Angular Frontend
 echo "🏗️ Building Angular frontend..."
 cd frontend/angular_frontend
-npm install
-npm run build -- --configuration=production
+# Using 'npm ci' for faster, more reliable installs in CI/CD
+npm ci --no-audit --no-fund
+# Building with no-progress to keep logs clean and help identify hangs
+npm run build -- --configuration=production --progress=false
 cd ../../
 
 # 3. Setup Django Backend
