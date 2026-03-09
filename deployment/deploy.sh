@@ -54,12 +54,19 @@ python manage.py collectstatic --noinput
 python manage.py migrate
 cd ../../
 
-# 4. Reload Services
+# 4. Finalize Infrastructure Configs
+echo "🛠️ Finalizing Nginx and Gunicorn configs..."
+PROJECT_ROOT=$(pwd)
+# Use a temporary file to avoid editing the template directly in place
+sed "s|{{PROJECT_ROOT}}|$PROJECT_ROOT|g" deployment/nginx.conf > deployment/nginx_final.conf
+sed "s|{{PROJECT_ROOT}}|$PROJECT_ROOT|g" deployment/gunicorn_config.py > deployment/gunicorn_final.conf
+
+# 5. Reload Services
 echo "🔄 Reloading Application Services..."
 
 # Restart Gunicorn (App Server)
 pkill -f "gunicorn" || true
-nohup backend/venv/bin/gunicorn -c deployment/gunicorn_config.py > gunicorn.log 2>&1 &
+nohup backend/venv/bin/gunicorn -c deployment/gunicorn_final.conf > gunicorn.log 2>&1 &
 
 # Restart Nginx (Reverse Proxy)
 if command -v systemctl >/dev/null 2>&1; then

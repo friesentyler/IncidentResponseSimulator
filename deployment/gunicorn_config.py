@@ -7,5 +7,5 @@ accesslog = "-"  # Log to stdout
 errorlog = "-"   # Log to stdout
 
 # Django settings
-pythonpath = "/Users/tylerfriesen/Documents/IncidentResponseSimulator/backend/django_backend"
+pythonpath = "{{PROJECT_ROOT}}/backend/django_backend"
 wsgi_app = "IncidentResponseSimulator.wsgi:application"
