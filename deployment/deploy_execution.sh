@@ -18,8 +18,8 @@ if [ ! -d "venv" ]; then
 fi
 
 source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+# Skip pip upgrade to reduce network calls; use --no-cache-dir for reliability
+pip install --no-cache-dir -r requirements.txt
 
 cd ..
 

@@ -89,13 +89,21 @@ jobs:
             -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@10.10.40.18 << 'EOF'
           set -e
-          echo "🚀 Configuring network for VPN compatibility (MTU 1300)"
-          # Find the default interface and set its MTU to 1300
+          echo "🚀 Configuring network for VPN compatibility"
+          # 1. Set MTU to 1300
           INTERFACE=$(ip route | grep default | awk '{print $5}' | head -n 1)
           if [ -n "$INTERFACE" ]; then
             echo "🔧 Setting MTU on $INTERFACE to 1300"
-            ip link set dev "$INTERFACE" mtu 1300 || echo "⚠️ Could not set MTU. Continuing..."
+            ip link set dev "$INTERFACE" mtu 1300 || echo "⚠️ Could not set MTU"
           fi
+          
+          # 2. Add MSS Clamping (Belt and Suspenders)
+          echo "🔧 Clamping TCP MSS"
+          iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu || echo "⚠️ Could not set iptables MSS clamping"
+          
+          # 3. Verify
+          echo "🔍 Verifying network settings:"
+          ip addr show $INTERFACE | grep mtu
           
           echo "🚀 Deploying Execution Service to Attack VM"
           
