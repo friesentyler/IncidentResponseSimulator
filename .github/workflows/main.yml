@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -73,7 +74,7 @@ jobs:
 
           echo "📥 Pulling latest code"
           git fetch origin
-          git reset --hard origin/master
+          git reset --hard origin/${{ github.ref_name }}
 
           ###################################
           # BACKEND (Django)
