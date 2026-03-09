@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-f3o16m&^ax54@h&3#=0tnoh^+-&vbvr8@&8%iulr3gd+n_%s6a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['10.10.40.15']
+ALLOWED_HOSTS = ['10.10.40.15', 'localhost']
 
 
 # Application definition
@@ -133,12 +133,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.getenv('STATIC_ROOT', BASE_DIR / 'static')
+
+# Additional locations of static files
+env_static_dirs = os.getenv('STATICFILES_DIRS', '')
+if env_static_dirs:
+    STATICFILES_DIRS = env_static_dirs.split(',')
+else:
+    STATICFILES_DIRS = []
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = os.getenv(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:4200'
-).split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:4200').split(',')
 
 CORS_ALLOW_HEADERS = [
     "content-type",

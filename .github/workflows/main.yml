@@ -26,6 +26,7 @@ jobs:
           [Interface]
           PrivateKey = ${{ secrets.WG_PRIVATE_KEY }}
           Address = 10.8.0.6/24
+          MTU = 1300
 
           [Peer]
           PublicKey = ${{ secrets.WG_SERVER_PUBLIC_KEY }}
@@ -38,6 +39,10 @@ jobs:
         run: |
           sudo wg-quick up wg0
           sleep 2
+          # Force MTU to confirmed safe limit of 1300
+          sudo ip link set dev wg0 mtu 1300
+          # Clamp MSS to PMTU (prevents SSH hanging on multi-hop routes)
+          sudo iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o wg0 -j TCPMSS --clamp-mss-to-pmtu
           ip addr show wg0
           ip route show
           nc -vz ${{ secrets.SSH_HOST }} 22 || echo "TCP to SSH port failed"
@@ -48,16 +53,13 @@ jobs:
           sleep 2
           ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts || true
 
-      - name: Test deploy Django + Angular
+      - name: Deploy Django + Angular
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
             -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          echo "Connected successfully!"
-
           set -e
-
-          echo "🚀 Starting test deployment"
+          echo "🚀 Starting production deployment"
 
           cd ~
 
@@ -68,59 +70,20 @@ jobs:
 
           cd IncidentResponseSimulator
 
-          echo "📌 Killing previous servers (if any)"
-          pkill -f "manage.py runserver" || true
-          pkill -f "ng serve" || true
-
-          echo "📥 Pulling latest code"
+          echo "📥 Pulling latest code for branch: ${{ github.ref_name }}"
           git fetch origin
           git reset --hard origin/${{ github.ref_name }}
 
-          ###################################
-          # BACKEND (Django)
-          ###################################
-          cd backend
+          # Ensure deploy script is executable
+          chmod +x deployment/deploy.sh
 
-          echo "🔐 Writing .env file"
-          cat > .env <<-EOL
-          STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
-          STRIPE_PRODUCT_ID=${{ secrets.STRIPE_PRODUCT_ID }}
-          EXECUTION_SERVICE_URL=${{ secrets.EXECUTION_SERVICE_URL }}
-          EOL
-
-          echo "🐍 Setting up virtualenv"
-          python3.14 -m venv venv || true
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-
-          echo "🔄 Running DB migrations"
-          python django_backend/manage.py makemigrations
-          python django_backend/manage.py migrate
-
-          echo "🏃 Running Django server in background"
-          nohup python django_backend/manage.py runserver 0.0.0.0:8000 > django.log 2>&1 &
-
-          ###################################
-          # FRONTEND (Angular)
-          ###################################
-          cd ../frontend/angular_frontend
-
-          echo "📦 Installing frontend dependencies"
-          npm install
-
-          echo "🔧 Creating Angular environment file dynamically"
-          mkdir -p src/environments
-          cat > src/environments/environment.ts <<EOL
-          export const environment = {
-            production: false,
-            apiUrl: 'http://${{ secrets.SSH_HOST }}:8000/api/',
-            stripePublishableKey: '${{ secrets.STRIPE_PUBLISHABLE_KEY }}'
-          };
-          EOL
-
-          echo "🏃 Running Angular server in background"
-          nohup ng serve --host 0.0.0.0 --port 4200 > angular.log 2>&1 &
-
-          echo "✅ Test deployment started and previous servers killed"
+          echo "🔐 Running deployment script"
+          # Pass secrets as environment variables to the script
+          STRIPE_SECRET_KEY='${{ secrets.STRIPE_SECRET_KEY }}' \
+          STRIPE_PRODUCT_ID='${{ secrets.STRIPE_PRODUCT_ID }}' \
+          STRIPE_PUBLISHABLE_KEY='${{ secrets.STRIPE_PUBLISHABLE_KEY }}' \
+          EXECUTION_SERVICE_URL='${{ secrets.EXECUTION_SERVICE_URL }}' \
+          SSH_HOST='${{ secrets.SSH_HOST }}' \
+          DEBUG=False \
+          ./deployment/deploy.sh
           EOF
