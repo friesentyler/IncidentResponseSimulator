@@ -72,7 +72,7 @@ nohup backend/venv/bin/gunicorn -c deployment/gunicorn_final.conf > gunicorn.log
 
 # Restart Nginx (Reverse Proxy)
 if command -v systemctl >/dev/null 2>&1; then
-    sudo systemctl restart nginx
+    systemctl restart nginx
 else
     echo "⚠️ systemctl not found, skipping nginx restart. (This script is intended for Linux production servers)"
 fi
