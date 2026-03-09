@@ -40,13 +40,13 @@ jobs:
           sudo wg-quick up wg0
           sleep 2
           ip addr show wg0
-          # DIAGNOSTIC: Test if 1500-byte packets (minus headers) are failing
-          echo "📡 Testing standard MTU (1472 payload)..."
-          ping -c 3 -s 1472 -M do ${{ secrets.SSH_HOST }} || echo "❌ 1500-byte packets too large"
           
-          # DIAGNOSTIC: Test if 1400-byte packets are passing
-          echo "📡 Testing 1400-byte MTU (1372 payload)..."
-          ping -c 3 -s 1372 -M do ${{ secrets.SSH_HOST }} && echo "✅ 1400-byte packets ok"
+          # DIAGNOSTIC: Binary search for functional MTU
+          echo "📡 Testing 1300-byte MTU (1272 payload)..."
+          ping -c 3 -s 1272 -M do ${{ secrets.SSH_HOST }} && echo "✅ 1300-byte packets ok" || echo "❌ 1300-byte packets too large"
+          
+          echo "📡 Testing 1200-byte MTU (1172 payload)..."
+          ping -c 3 -s 1172 -M do ${{ secrets.SSH_HOST }} && echo "✅ 1200-byte packets ok" || echo "❌ 1200-byte packets too large"
           
           ip route show
           nc -vz ${{ secrets.SSH_HOST }} 22 || echo "TCP to SSH port failed"
