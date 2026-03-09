@@ -26,7 +26,7 @@ jobs:
           [Interface]
           PrivateKey = ${{ secrets.WG_PRIVATE_KEY }}
           Address = 10.8.0.6/24
-          MTU = 1420
+          MTU = 1300
 
           [Peer]
           PublicKey = ${{ secrets.WG_SERVER_PUBLIC_KEY }}
@@ -39,15 +39,11 @@ jobs:
         run: |
           sudo wg-quick up wg0
           sleep 2
+          # Force MTU to confirmed safe limit of 1300
+          sudo ip link set dev wg0 mtu 1300
+          # Clamp MSS to PMTU (prevents SSH hanging on multi-hop routes)
+          sudo iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o wg0 -j TCPMSS --clamp-mss-to-pmtu
           ip addr show wg0
-          
-          # DIAGNOSTIC: Binary search for functional MTU
-          echo "📡 Testing 1300-byte MTU (1272 payload)..."
-          ping -c 3 -s 1272 -M do ${{ secrets.SSH_HOST }} && echo "✅ 1300-byte packets ok" || echo "❌ 1300-byte packets too large"
-          
-          echo "📡 Testing 1200-byte MTU (1172 payload)..."
-          ping -c 3 -s 1172 -M do ${{ secrets.SSH_HOST }} && echo "✅ 1200-byte packets ok" || echo "❌ 1200-byte packets too large"
-          
           ip route show
           nc -vz ${{ secrets.SSH_HOST }} 22 || echo "TCP to SSH port failed"
 
