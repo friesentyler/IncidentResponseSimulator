@@ -1,0 +1,231 @@
+.quiz-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.quiz-header .nb-button,
+.quiz-controls .nb-button,
+.quiz-error .nb-button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 3px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px #000;
+  transition: all 0.1s;
+  background-color: #fff;
+}
+
+.quiz-header .nb-button:hover,
+.quiz-controls .nb-button:hover,
+.quiz-error .nb-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #000;
+}
+
+.quiz-header .nb-button:active,
+.quiz-controls .nb-button:active,
+.quiz-error .nb-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+.quiz-controls .nb-button.blue {
+  background-color: var(--nb-blue, #6B90E2);
+}
+
+.quiz-controls .nb-button.green {
+  background-color: var(--nb-green, #6BE290);
+}
+
+.quiz-controls .nb-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0px #000;
+}
+
+.quiz-container {
+  margin-top: 20px;
+}
+
+.progress-tracker {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.progress-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  border: 3px solid #000;
+  background-color: #e0e0e0;
+  transition: all 0.2s;
+  box-shadow: 2px 2px 0px #000;
+}
+
+.progress-circle.answered {
+  background-color: var(--nb-blue, #6B90E2);
+}
+
+.progress-circle.active {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px #000;
+  border-color: var(--nb-yellow, #Fce96a);
+}
+
+.question-block {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 3px solid #000;
+  background-color: #fff;
+  box-shadow: 4px 4px 0px #000;
+  border-radius: 8px;
+}
+
+.question-text {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.question-hint {
+  font-size: 0.9em;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choice-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border: 3px solid #000;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: transform 0.1s;
+  box-shadow: 2px 2px 0px #000;
+}
+
+.choice-item:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #000;
+}
+
+.choice-item.selected {
+  background-color: var(--nb-purple, #D4A1FB);
+}
+
+.choice-indicator {
+  margin-right: 15px;
+}
+
+.radio-btn,
+.check-box {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.radio-btn {
+  border-radius: 50%;
+}
+
+.inner-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #000;
+}
+
+.radio-btn .inner-indicator {
+  border-radius: 50%;
+}
+
+.choice-text {
+  font-weight: 500;
+}
+
+.quiz-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Result View Styling */
+.result-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.score-banner {
+  padding: 20px;
+  border: 3px solid #000;
+  border-radius: 8px;
+  background-color: var(--nb-blue, #6B90E2);
+  text-align: center;
+  box-shadow: 4px 4px 0px #000;
+}
+
+.score-banner.perfect {
+  background-color: var(--nb-green, #6BE290);
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.result-item {
+  padding: 15px;
+  border: 3px solid #000;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 2px 2px 0px #000;
+}
+
+.incorrect-review {
+  margin-top: 10px;
+  padding: 15px;
+  border: 3px solid #000;
+  background-color: #fff5f5;
+  border-radius: 5px;
+}
+
+.correct-choices {
+  margin-top: 10px;
+}
+
+.correct-choices ul {
+  padding-left: 20px;
+  margin-top: 5px;
+}
+
+.rationale-box {
+  margin-top: 5px;
+  padding: 10px;
+  background-color: #e0e0e0;
+  border-left: 5px solid #000;
+  font-style: italic;
+  font-size: 0.9em;
+}

@@ -1,43 +1,48 @@
 <div class="nb-card details">
   <div class="nb-card-content">
-    <!-- Nested Title Card -->
-    <div class="nb-card nested-title-card">
-      <div class="nb-card-content">
-        <h2 class="nb-card-title">{{ scenarioTitle }}</h2>
+
+    <!-- DEFAULT VIEW: title + body -->
+    <ng-container *ngIf="!showQuiz">
+      <div class="nb-card nested-title-card">
+        <div class="nb-card-content">
+          <h2 class="nb-card-title">{{ scenarioTitle }}</h2>
+        </div>
       </div>
-    </div>
 
-    <!-- Nested Body Card -->
-    <div class="nb-card nested-body-card">
-      <div class="nb-card-content">
-        <div class="scenario-details-body">
-          <p class="nb-card-text" [class.dimmed]="scenarioStatus === 'loading' || scenarioStatus === 'resetting'">
-            {{ scenarioDescription }}
-          </p>
-
-          @if (scenarioStatus === 'loading' || scenarioStatus === 'resetting') {
-          <div class="status-overlay">
-            <div class="nb-spinner"></div>
-            <p class="status-text">
-              {{ scenarioStatus === 'loading' ? 'VM Spinning Up...' : 'VM Tearing Down...' }}
+      <div class="nb-card nested-body-card">
+        <div class="nb-card-content">
+          <div class="scenario-details-body">
+            <p class="nb-card-text" [class.dimmed]="scenarioStatus === 'loading' || scenarioStatus === 'resetting'">
+              {{ scenarioDescription }}
             </p>
+
+            @if (scenarioStatus === 'loading' || scenarioStatus === 'resetting') {
+            <div class="status-overlay">
+              <div class="nb-spinner"></div>
+              <p class="status-text">
+                {{ scenarioStatus === 'loading' ? 'VM Spinning Up...' : 'VM Tearing Down...' }}
+              </p>
+            </div>
+            }
           </div>
-          }
-        </div>
 
-        <div class="button-group">
-          @if (scenarioStatus !== 'loading' && scenarioStatus !== 'resetting') {
-          <!-- Consolidated Start/Stop Toggle Button -->
-          <button class="nb-button" [class.blue]="scenarioStatus === 'inactive'"
-            [class.orange]="scenarioStatus === 'active'" (click)="onLaunch()">
-            {{ scenarioStatus === 'inactive' ? 'Start Scenario' : 'Stop Scenario' }}
-          </button>
-
-          <!-- Quiz button only visible if NOT spinning up/down -->
-          <button class="nb-button green">Start Quiz</button>
-          }
+          <div class="button-group">
+            @if (scenarioStatus !== 'loading' && scenarioStatus !== 'resetting') {
+            <button class="nb-button" [class.blue]="scenarioStatus === 'inactive'"
+              [class.orange]="scenarioStatus === 'active'" (click)="onLaunch()">
+              {{ scenarioStatus === 'inactive' ? 'Start Scenario' : 'Stop Scenario' }}
+            </button>
+            <button class="nb-button green" *ngIf="scenarioId" (click)="onStartQuiz()">Start Quiz</button>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
+
+    <!-- QUIZ VIEW: replaces everything above -->
+    <ng-container *ngIf="showQuiz && scenarioId">
+      <app-quiz [scenarioId]="scenarioId" (exit)="onBackToDetails()"></app-quiz>
+    </ng-container>
+
   </div>
 </div>

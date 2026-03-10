@@ -1,0 +1,95 @@
+<!-- Back button row -->
+<div class="quiz-header">
+  <button class="nb-button" (click)="exit.emit()">← Back</button>
+  <h3 style="margin: 0;">Knowledge Check</h3>
+</div>
+
+<div *ngIf="loading()" class="quiz-loading">
+  <p>Loading quiz...</p>
+</div>
+
+<!-- Load error -->
+<div *ngIf="loadError()" class="quiz-error">
+  <p>⚠️ No quiz found for this scenario.</p>
+  <button class="nb-button" (click)="startQuiz()">Try Again</button>
+</div>
+
+<!-- Result View -->
+<div *ngIf="result()" class="result-view">
+  <div class="score-banner" [class.perfect]="result()!.score === result()!.total">
+    <h3 style="margin: 0;">You scored {{ result()?.score }} out of {{ result()?.total }}!</h3>
+  </div>
+
+  <div class="results-list">
+    <div *ngFor="let q of quiz()?.questions" class="result-item">
+      <h4 style="margin: 0 0 10px 0;">{{ q.text }}</h4>
+      <div *ngIf="!result()?.results?.[q.id.toString()]">
+        <span class="nb-badge" style="background-color: var(--nb-green);">Correct!</span>
+      </div>
+      <div *ngIf="result()?.results?.[q.id.toString()]?.correct === false" class="incorrect-review">
+        <span class="nb-badge" style="background-color: var(--nb-red); margin-bottom: 10px;">Incorrect</span>
+        <div class="correct-choices">
+          <strong>Correct Answer:</strong>
+          <ul>
+            <li *ngFor="let choice of result()?.results?.[q.id.toString()]?.correct_choices">
+              <p style="margin: 5px 0 0 0;">{{ choice.text }}</p>
+              <div class="rationale-box">
+                <strong>Why:</strong> {{ choice.rationale }}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Active Quiz View -->
+<div *ngIf="!loading() && !loadError() && quiz() && !result()">
+  <!-- Progress Tracker -->
+  <div class="progress-tracker">
+    <div *ngFor="let q of quiz()?.questions; let i = index" class="progress-circle"
+      [class.active]="currentQuestionIndex() === i" [class.answered]="isQuestionAnswered(q.id)"
+      (click)="goToQuestion(i)">
+      {{ i + 1 }}
+    </div>
+  </div>
+
+  <!-- Question -->
+  <div class="question-block">
+    <h3 class="question-text">{{ currentQuestion()?.text }}</h3>
+    <p class="question-hint">
+      {{ currentQuestion()?.question_type === 'select_all' ? '(Select all that apply)' : '(Select one)' }}
+    </p>
+
+    <div class="choices-list">
+      <div *ngFor="let choice of currentQuestion()?.choices" class="choice-item"
+        [class.selected]="isChoiceSelected(currentQuestion()!.id, choice.id)"
+        (click)="toggleAnswer(currentQuestion()!.id, choice.id, currentQuestion()!.question_type)">
+        <div class="choice-indicator">
+          <div [class]="currentQuestion()?.question_type === 'multiple_choice' ? 'radio-btn' : 'check-box'">
+            <div class="inner-indicator" *ngIf="isChoiceSelected(currentQuestion()!.id, choice.id)"></div>
+          </div>
+        </div>
+        <div class="choice-text">{{ choice.text }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Controls -->
+  <div class="quiz-controls">
+    <button class="nb-button" [disabled]="currentQuestionIndex() === 0" (click)="prevQuestion()">
+      ← Previous
+    </button>
+
+    <button *ngIf="currentQuestionIndex() < quiz()!.questions.length - 1" class="nb-button blue"
+      (click)="nextQuestion()">
+      Next →
+    </button>
+
+    <button *ngIf="currentQuestionIndex() === quiz()!.questions.length - 1" class="nb-button green"
+      [disabled]="!allAnswered()" (click)="submit()">
+      Submit Quiz
+    </button>
+  </div>
+</div>

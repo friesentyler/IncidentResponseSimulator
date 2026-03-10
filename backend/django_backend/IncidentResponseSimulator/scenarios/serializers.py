@@ -1,5 +1,25 @@
 from rest_framework import serializers
-from .models import ScenarioModel
+from .models import ScenarioModel, Quiz, Question, AnswerChoice
+
+class AnswerChoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AnswerChoice
+        fields = ['id', 'text']
+
+class QuestionSerializer(serializers.ModelSerializer):
+    choices = AnswerChoiceSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Question
+        fields = ['id', 'text', 'question_type', 'order', 'choices']
+
+class QuizSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Quiz
+        fields = ['id', 'title', 'description', 'questions']
+
 
 
 class ScenarioSerializer(serializers.ModelSerializer):
