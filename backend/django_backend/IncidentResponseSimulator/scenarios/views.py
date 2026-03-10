@@ -1,15 +1,73 @@
-from django.shortcuts import render
-from django.conf import settings
-from rest_framework import viewsets
-from .models import ScenarioModel
-from .serializers import ScenarioSerializer
-from rest_framework.permissions import IsAuthenticated
-
-
 import threading
-import requests 
+import requests
 import time
 import logging
+
+from django.shortcuts import render, get_object_or_404
+from django.conf import settings
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import ScenarioModel, Quiz, Question, AnswerChoice
+from .serializers import ScenarioSerializer, QuizSerializer
+
+class QuizDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, scenario_id):
+        scenario = get_object_or_404(ScenarioModel, id=scenario_id)
+        quiz = get_object_or_404(Quiz, scenario=scenario)
+        serializer = QuizSerializer(quiz)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, scenario_id):
+        scenario = get_object_or_404(ScenarioModel, id=scenario_id)
+        quiz = get_object_or_404(Quiz, scenario=scenario)
+        
+        user_answers = request.data.get('answers', {})
+        questions = quiz.questions.all()
+        
+        if len(user_answers) != questions.count():
+            return Response({"error": "All questions must be answered."}, status=status.HTTP_400_BAD_REQUEST)
+
+        score = 0
+        total_questions = questions.count()
+        results = {}
+
+        for question in questions:
+            q_id_str = str(question.id)
+            if q_id_str not in user_answers:
+                return Response({"error": f"Missing answer for question {question.id}"}, status=status.HTTP_400_BAD_REQUEST)
+
+            submitted_choice_ids = user_answers[q_id_str]
+            if not isinstance(submitted_choice_ids, list):
+                submitted_choice_ids = [submitted_choice_ids]
+            
+            correct_choices = question.choices.filter(is_correct=True)
+            correct_choice_ids = set(c.id for c in correct_choices)
+            submitted_set = set(submitted_choice_ids)
+
+            if submitted_set == correct_choice_ids:
+                score += 1
+            else:
+                correct_info = []
+                for c in correct_choices:
+                    correct_info.append({
+                        "id": c.id,
+                        "text": c.text,
+                        "rationale": c.rationale
+                    })
+                results[q_id_str] = {
+                    "correct": False,
+                    "correct_choices": correct_info
+                }
+
+        return Response({
+            "score": score,
+            "total": total_questions,
+            "results": results
+        }, status=status.HTTP_200_OK)
 
 logger = logging.getLogger(__name__)
 

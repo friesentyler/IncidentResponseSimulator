@@ -15,7 +15,8 @@
   <div class="card-container content-area">
     <app-scenario-details [scenarioTitle]="selectedScenario()?.scenario_name || 'Scenario Details'"
       [scenarioDescription]="selectedScenario()?.scenario_description || 'Select a scenario from the left to view details and start the interactive simulation or test your knowledge with a quiz.'"
-      [scenarioStatus]="selectedScenario()?.scenario_status" (launch)="launchScenario()">
+      [scenarioStatus]="selectedScenario()?.scenario_status" [scenarioId]="selectedScenario()?.id"
+      (launch)="launchScenario()">
     </app-scenario-details>
   </div>
 </div>
