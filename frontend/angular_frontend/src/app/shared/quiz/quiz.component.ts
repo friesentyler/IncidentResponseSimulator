@@ -20,8 +20,8 @@ export class QuizComponent implements OnInit {
   private quizService = inject(QuizService);
 
   quiz = signal<Quiz | null>(null);
-  quizStarted = signal<boolean>(false);
   currentQuestionIndex = signal<number>(0);
+  resultQuestionIndex = signal<number>(0);
   userAnswers = signal<{ [questionId: string]: number[] }>({});
   result = signal<QuizSubmissionResult | null>(null);
   loading = signal<boolean>(false);
@@ -31,6 +31,12 @@ export class QuizComponent implements OnInit {
     const q = this.quiz();
     if (!q) return null;
     return q.questions[this.currentQuestionIndex()];
+  });
+
+  currentResultQuestion = computed(() => {
+    const q = this.quiz();
+    if (!q) return null;
+    return q.questions[this.resultQuestionIndex()];
   });
 
   allAnswered = computed(() => {
@@ -47,7 +53,6 @@ export class QuizComponent implements OnInit {
     if (!this.scenarioId) return;
     this.loading.set(true);
     this.loadError.set(false);
-    this.quizStarted.set(true);
     this.quizService.getQuiz(this.scenarioId).subscribe({
       next: (data) => {
         this.quiz.set(data);
@@ -78,6 +83,23 @@ export class QuizComponent implements OnInit {
     this.currentQuestionIndex.set(index);
   }
 
+  nextResult() {
+    const max = this.quiz()?.questions.length || 0;
+    if (this.resultQuestionIndex() < max - 1) {
+      this.resultQuestionIndex.update(i => i + 1);
+    }
+  }
+
+  prevResult() {
+    if (this.resultQuestionIndex() > 0) {
+      this.resultQuestionIndex.update(i => i - 1);
+    }
+  }
+
+  goToResult(index: number) {
+    this.resultQuestionIndex.set(index);
+  }
+
   toggleAnswer(questionId: number, choiceId: number, type: 'multiple_choice' | 'select_all') {
     this.userAnswers.update(current => {
       const qIdStr = questionId.toString();
@@ -103,7 +125,7 @@ export class QuizComponent implements OnInit {
 
   isQuestionAnswered(questionId: number): boolean {
     const answers = this.userAnswers()[questionId.toString()];
-    return answers && answers.length > 0;
+    return !!(answers && answers.length > 0);
   }
 
   submit() {

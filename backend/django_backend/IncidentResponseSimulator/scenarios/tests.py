@@ -5,7 +5,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.exceptions import ValidationError
-from .models import ScenarioModel
+from .models import ScenarioModel, Quiz, Question, AnswerChoice
 from .serializers import ScenarioSerializer
 from .views import ScenarioViewSet
 import time
@@ -152,3 +152,158 @@ class ScenarioAPITest(TestCase):
         self.scenario.refresh_from_db()
         self.assertEqual(self.scenario.scenario_status, 'inactive')
 
+
+class QuizModelTest(TestCase):
+    def setUp(self):
+        self.scenario = ScenarioModel.objects.create(
+            scenario_name="Quiz Scenario",
+            scenario_description="Testing quizzes",
+            scenario_status="inactive"
+        )
+        self.quiz = Quiz.objects.create(
+            scenario=self.scenario,
+            title="Test Quiz",
+            description="A test quiz"
+        )
+        self.question = Question.objects.create(
+            quiz=self.quiz,
+            text="What is 2+2?",
+            question_type="multiple_choice",
+            order=1
+        )
+        self.correct_choice = AnswerChoice.objects.create(
+            question=self.question,
+            text="4",
+            is_correct=True,
+            rationale="Basic arithmetic."
+        )
+        self.wrong_choice = AnswerChoice.objects.create(
+            question=self.question,
+            text="5",
+            is_correct=False
+        )
+
+    def test_quiz_str(self):
+        self.assertEqual(str(self.quiz), "Quiz for Quiz Scenario")
+
+    def test_question_str(self):
+        self.assertEqual(str(self.question), "Test Quiz - Q: What is 2+2?")
+
+    def test_answer_choice_str(self):
+        self.assertEqual(str(self.correct_choice), "4")
+
+    def test_question_ordering(self):
+        q2 = Question.objects.create(quiz=self.quiz, text="Second?", order=0)
+        questions = list(self.quiz.questions.all())
+        self.assertEqual(questions[0], q2)  # order=0 first
+        self.assertEqual(questions[1], self.question)  # order=1 second
+
+
+class QuizAPITest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(username='quiztester', password='pass123')
+        self.scenario = ScenarioModel.objects.create(
+            scenario_name="API Quiz Scenario",
+            scenario_description="Quiz API Test",
+            scenario_status="inactive"
+        )
+        self.quiz = Quiz.objects.create(
+            scenario=self.scenario,
+            title="API Quiz",
+            description="Testing the API"
+        )
+        self.q1 = Question.objects.create(
+            quiz=self.quiz, text="Q1?", question_type="multiple_choice", order=1
+        )
+        self.q1_correct = AnswerChoice.objects.create(
+            question=self.q1, text="Correct", is_correct=True, rationale="Because it is."
+        )
+        self.q1_wrong = AnswerChoice.objects.create(
+            question=self.q1, text="Wrong", is_correct=False
+        )
+        self.q2 = Question.objects.create(
+            quiz=self.quiz, text="Q2?", question_type="select_all", order=2
+        )
+        self.q2_c1 = AnswerChoice.objects.create(
+            question=self.q2, text="A", is_correct=True, rationale="A is correct."
+        )
+        self.q2_c2 = AnswerChoice.objects.create(
+            question=self.q2, text="B", is_correct=True, rationale="B is also correct."
+        )
+        self.q2_c3 = AnswerChoice.objects.create(
+            question=self.q2, text="C", is_correct=False
+        )
+        self.quiz_url = reverse('quiz-detail', kwargs={'scenario_id': self.scenario.id})
+
+    def test_get_quiz_unauthenticated(self):
+        response = self.client.get(self.quiz_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_quiz_success(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.quiz_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'API Quiz')
+        self.assertEqual(len(response.data['questions']), 2)
+        # Verify choices are present and don't leak is_correct
+        q1_data = response.data['questions'][0]
+        self.assertEqual(len(q1_data['choices']), 2)
+        self.assertNotIn('is_correct', q1_data['choices'][0])
+
+    def test_get_quiz_404_no_quiz(self):
+        scenario_no_quiz = ScenarioModel.objects.create(
+            scenario_name="No Quiz", scenario_description="None", scenario_status="inactive"
+        )
+        url = reverse('quiz-detail', kwargs={'scenario_id': scenario_no_quiz.id})
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_submit_all_correct(self):
+        self.client.force_authenticate(user=self.user)
+        answers = {
+            str(self.q1.id): [self.q1_correct.id],
+            str(self.q2.id): [self.q2_c1.id, self.q2_c2.id],
+        }
+        response = self.client.post(self.quiz_url, {'answers': answers}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['score'], 2)
+        self.assertEqual(response.data['total'], 2)
+        self.assertEqual(response.data['results'], {})
+
+    def test_submit_some_incorrect(self):
+        self.client.force_authenticate(user=self.user)
+        answers = {
+            str(self.q1.id): [self.q1_wrong.id],  # Wrong
+            str(self.q2.id): [self.q2_c1.id, self.q2_c2.id],  # Correct
+        }
+        response = self.client.post(self.quiz_url, {'answers': answers}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['score'], 1)
+        self.assertEqual(response.data['total'], 2)
+        # Check that incorrect result includes rationale
+        q1_result = response.data['results'][str(self.q1.id)]
+        self.assertFalse(q1_result['correct'])
+        self.assertEqual(len(q1_result['correct_choices']), 1)
+        self.assertEqual(q1_result['correct_choices'][0]['rationale'], "Because it is.")
+
+    def test_submit_missing_answers(self):
+        self.client.force_authenticate(user=self.user)
+        answers = {
+            str(self.q1.id): [self.q1_correct.id],
+            # Missing q2
+        }
+        response = self.client.post(self.quiz_url, {'answers': answers}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_submit_normalizes_non_list_answer(self):
+        """Single answer sent as int instead of list should be normalized."""
+        self.client.force_authenticate(user=self.user)
+        answers = {
+            str(self.q1.id): self.q1_correct.id,  # int, not list
+            str(self.q2.id): [self.q2_c1.id, self.q2_c2.id],
+        }
+        response = self.client.post(self.quiz_url, {'answers': answers}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['score'], 2)

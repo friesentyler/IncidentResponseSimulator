@@ -14,33 +14,54 @@
   <button class="nb-button" (click)="startQuiz()">Try Again</button>
 </div>
 
-<!-- Result View -->
+<!-- Result View (paginated) -->
 <div *ngIf="result()" class="result-view">
   <div class="score-banner" [class.perfect]="result()!.score === result()!.total">
     <h3 style="margin: 0;">You scored {{ result()?.score }} out of {{ result()?.total }}!</h3>
   </div>
 
-  <div class="results-list">
-    <div *ngFor="let q of quiz()?.questions" class="result-item">
-      <h4 style="margin: 0 0 10px 0;">{{ q.text }}</h4>
-      <div *ngIf="!result()?.results?.[q.id.toString()]">
-        <span class="nb-badge" style="background-color: var(--nb-green);">Correct!</span>
-      </div>
-      <div *ngIf="result()?.results?.[q.id.toString()]?.correct === false" class="incorrect-review">
-        <span class="nb-badge" style="background-color: var(--nb-red); margin-bottom: 10px;">Incorrect</span>
-        <div class="correct-choices">
-          <strong>Correct Answer:</strong>
-          <ul>
-            <li *ngFor="let choice of result()?.results?.[q.id.toString()]?.correct_choices">
-              <p style="margin: 5px 0 0 0;">{{ choice.text }}</p>
-              <div class="rationale-box">
-                <strong>Why:</strong> {{ choice.rationale }}
-              </div>
-            </li>
-          </ul>
-        </div>
+  <!-- Progress circles for results -->
+  <div class="progress-tracker">
+    <div *ngFor="let q of quiz()?.questions; let i = index" class="progress-circle"
+      [class.active]="resultQuestionIndex() === i" [class.correct]="!result()?.results?.[q.id.toString()]"
+      [class.incorrect]="result()?.results?.[q.id.toString()]?.correct === false" (click)="goToResult(i)">
+      {{ i + 1 }}
+    </div>
+  </div>
+
+  <!-- Single result question -->
+  <div class="question-block" *ngIf="currentResultQuestion()">
+    <h3 class="question-text">{{ currentResultQuestion()?.text }}</h3>
+
+    <div *ngIf="!result()?.results?.[currentResultQuestion()!.id.toString()]" style="margin-top: 10px;">
+      <span class="nb-badge" style="background-color: var(--nb-green);">✓ Correct!</span>
+    </div>
+
+    <div *ngIf="result()?.results?.[currentResultQuestion()!.id.toString()]?.correct === false"
+      class="incorrect-review">
+      <span class="nb-badge" style="background-color: var(--nb-red); margin-bottom: 10px;">✗ Incorrect</span>
+      <div class="correct-choices">
+        <strong>Correct Answer:</strong>
+        <ul>
+          <li *ngFor="let choice of result()?.results?.[currentResultQuestion()!.id.toString()]?.correct_choices">
+            <p style="margin: 5px 0 0 0;">{{ choice.text }}</p>
+            <div class="rationale-box">
+              <strong>Why:</strong> {{ choice.rationale }}
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
+  </div>
+
+  <!-- Result navigation -->
+  <div class="quiz-controls">
+    <button class="nb-button" [disabled]="resultQuestionIndex() === 0" (click)="prevResult()">
+      ← Previous
+    </button>
+    <button class="nb-button blue" *ngIf="resultQuestionIndex() < quiz()!.questions.length - 1" (click)="nextResult()">
+      Next →
+    </button>
   </div>
 </div>
 

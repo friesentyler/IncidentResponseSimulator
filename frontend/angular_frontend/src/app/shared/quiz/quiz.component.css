@@ -48,9 +48,7 @@
   box-shadow: 4px 4px 0px #000;
 }
 
-.quiz-container {
-  margin-top: 20px;
-}
+
 
 .progress-tracker {
   display: flex;
@@ -82,6 +80,14 @@
   transform: translateY(-2px);
   box-shadow: 4px 4px 0px #000;
   border-color: var(--nb-yellow, #Fce96a);
+}
+
+.progress-circle.correct {
+  background-color: var(--nb-green, #6BE290);
+}
+
+.progress-circle.incorrect {
+  background-color: var(--nb-red, #E26B6B);
 }
 
 .question-block {
