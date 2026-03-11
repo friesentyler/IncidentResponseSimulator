@@ -28,11 +28,14 @@
 
           <div class="button-group">
             @if (scenarioStatus !== 'loading' && scenarioStatus !== 'resetting') {
-            <button class="nb-button" [class.blue]="scenarioStatus === 'inactive'"
-              [class.orange]="scenarioStatus === 'active'" (click)="onLaunch()">
-              {{ scenarioStatus === 'inactive' ? 'Start Scenario' : 'Stop Scenario' }}
+            <button class="nb-button" 
+              [class.blue]="!scenarioId || scenarioStatus === 'inactive'"
+              [class.orange]="scenarioStatus === 'active'" 
+              [disabled]="!scenarioId"
+              (click)="onLaunch()">
+              {{ scenarioStatus === 'active' ? 'Stop Scenario' : 'Start Scenario' }}
             </button>
-            <button class="nb-button green" *ngIf="scenarioId" (click)="onStartQuiz()">Start Quiz</button>
+            <button class="nb-button green" [disabled]="!scenarioId" (click)="onStartQuiz()">Start Quiz</button>
             }
           </div>
         </div>

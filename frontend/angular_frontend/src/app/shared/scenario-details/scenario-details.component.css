@@ -91,6 +91,13 @@
   font-weight: 800;
 }
 
+.nb-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0px #000;
+}
+
 /* Spinner and Status Styles */
 .scenario-details-body {
   position: relative;

@@ -64,4 +64,26 @@ describe('ScenarioDetailsComponent', () => {
         expect(toggleButton).toBeTruthy();
         expect(toggleButton.nativeElement.textContent.trim()).toBe('Start Scenario');
     });
+
+    it('should show disabled buttons when no scenario is selected', () => {
+        component.scenarioId = undefined;
+        component.scenarioStatus = undefined;
+        fixture.detectChanges();
+
+        const buttons = fixture.debugElement.queryAll(By.css('.nb-button'));
+        expect(buttons.length).toBe(2);
+
+        const startButton = buttons[0].nativeElement;
+        const quizButton = buttons[1].nativeElement;
+
+        // Both buttons should be disabled
+        expect(startButton.disabled).toBeTrue();
+        expect(quizButton.disabled).toBeTrue();
+
+        // Start button should have 'blue' class explicitly (default state)
+        expect(startButton.classList.contains('blue')).toBeTrue();
+        
+        // Quiz button should have 'green' class
+        expect(quizButton.classList.contains('green')).toBeTrue();
+    });
 });
