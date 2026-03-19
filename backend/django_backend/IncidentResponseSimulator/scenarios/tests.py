@@ -5,9 +5,11 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.exceptions import ValidationError
-from .models import ScenarioModel, Quiz, Question, AnswerChoice
+from .models import ScenarioModel, Quiz, Question, AnswerChoice, ScenarioCredential
 from .serializers import ScenarioSerializer
 from .views import ScenarioViewSet
+from django.core.files.base import ContentFile
+from rest_framework.test import APIRequestFactory
 import time
 from unittest.mock import patch
 import requests
@@ -73,6 +75,13 @@ class ScenarioAPITest(TestCase):
         )
         self.list_url = reverse('scenarios-list')
         self.detail_url = reverse('scenarios-detail', kwargs={'pk': self.scenario.id})
+        self.test_creds = []
+
+    def tearDown(self):
+        # Manually delete only the files created during this test to keep the directory clean
+        for cred in self.test_creds:
+            if cred.scenario_credentials and cred.scenario_credentials.name:
+                cred.scenario_credentials.delete(save=False)
 
     def test_unauthenticated_access_denied(self):
         response = self.client.get(self.list_url)
@@ -83,6 +92,28 @@ class ScenarioAPITest(TestCase):
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
+
+    def test_serializer_includes_download_url_when_active(self):
+        cred = ScenarioCredential.objects.create(
+            scenario_credentials=ContentFile(b"test", name="test.txt")
+        )
+        self.test_creds.append(cred)
+        self.scenario.scenario_credentials = cred
+        self.scenario.scenario_status = 'active'
+        self.scenario.save()
+
+        factory = APIRequestFactory()
+        request = factory.get('/')
+        serializer = ScenarioSerializer(self.scenario, context={'request': request})
+        
+        self.assertIsNotNone(serializer.data['download_url'])
+        self.assertIn('test', serializer.data['download_url'])
+        self.assertTrue(serializer.data['download_url'].endswith('.txt'))
+
+        self.scenario.scenario_status = 'inactive'
+        self.scenario.save()
+        serializer = ScenarioSerializer(self.scenario, context={'request': request})
+        self.assertIsNone(serializer.data['download_url'])
 
     def test_launch_scenario_api(self):
         self.client.force_authenticate(user=self.user)

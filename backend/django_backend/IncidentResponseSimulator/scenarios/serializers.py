@@ -20,13 +20,20 @@ class QuizSerializer(serializers.ModelSerializer):
         model = Quiz
         fields = ['id', 'title', 'description', 'questions']
 
-
-
 class ScenarioSerializer(serializers.ModelSerializer):
+    download_url = serializers.SerializerMethodField()
+
     class Meta:
         model = ScenarioModel
-        fields = ['id', 'scenario_name', 'scenario_description', 'scenario_status']
+        fields = ['id', 'scenario_name', 'scenario_description', 'scenario_status', 'download_url']
         read_only_fields = ['id', 'scenario_name', 'scenario_description']
+
+    def get_download_url(self, obj):
+        if obj.scenario_status == 'active' and obj.scenario_credentials:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.scenario_credentials.scenario_credentials.url)
+        return None
 
     def validate_scenario_status(self, value):
         """
