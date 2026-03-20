@@ -15,8 +15,8 @@ describe('DashboardPageComponent', () => {
     next: null,
     previous: null,
     results: [
-      { id: 1, scenario_name: 'S1', scenario_description: 'D1', scenario_status: 'inactive' },
-      { id: 2, scenario_name: 'S2', scenario_description: 'D2', scenario_status: 'loading' }
+      { id: 1, scenario_name: 'S1', scenario_description: 'D1', scenario_status: 'inactive' as const, download_url: null },
+      { id: 2, scenario_name: 'S2', scenario_description: 'D2', scenario_status: 'loading' as const, download_url: null }
     ]
   };
 
@@ -67,7 +67,7 @@ describe('DashboardPageComponent', () => {
     expect(patchReq.request.method).toEqual('PATCH');
     expect(patchReq.request.body).toEqual({ scenario_status: 'loading' });
 
-    const updatedS1 = { ...mockScenarios.results[0], scenario_status: 'loading' as const };
+    const updatedS1 = { ...mockScenarios.results[0], scenario_status: 'loading' as const, download_url: null };
     patchReq.flush(updatedS1);
 
     expect(component.selectedScenario()?.scenario_status).toBe('loading');
@@ -87,5 +87,24 @@ describe('DashboardPageComponent', () => {
     pollReq.flush(activeS2);
 
     expect(component.selectedScenario()?.scenario_status).toBe('active');
+  }));
+ 
+  it('should trigger download when status becomes active and download_url is present', fakeAsync(() => {
+    const spy = spyOn<any>(component, 'triggerFileDownload');
+ 
+    // Select S2 which is 'loading'
+    component.selectScenario(mockScenarios.results[1]);
+ 
+    tick(5000);
+ 
+    const pollReq = httpTestingController.expectOne(`${environment.apiUrl}scenarios/2/`);
+    const activeS2 = { 
+      ...mockScenarios.results[1], 
+      scenario_status: 'active' as const, 
+      download_url: 'http://localhost:8000/media/secret.txt' 
+    };
+    pollReq.flush(activeS2);
+ 
+    expect(spy).toHaveBeenCalledWith('http://localhost:8000/media/secret.txt');
   }));
 });

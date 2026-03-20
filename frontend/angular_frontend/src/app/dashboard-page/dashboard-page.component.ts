@@ -82,11 +82,25 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         this.selectedScenario.set(updated);
         this.scenarios.update(list => list.map(s => s.id === updated.id ? updated : s));
 
-        if (updated.scenario_status === 'active' || updated.scenario_status === 'inactive') {
+        if (updated.scenario_status === 'active') {
+          if (updated.download_url) {
+            this.triggerFileDownload(updated.download_url);
+          }
+          this.stopPolling();
+        } else if (updated.scenario_status === 'inactive') {
           this.stopPolling();
         }
       });
     }, 5000);
+  }
+
+  private triggerFileDownload(url: string) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = '';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   private stopPolling() {
