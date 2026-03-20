@@ -12,9 +12,20 @@
     padding: 10px 20px !important;
     text-align: center !important;
     height: auto !important;
+    background-color: var(--accent-teal) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-primary) !important;
+    box-shadow: 4px 4px 0px var(--shadow-color) !important;
+    font-weight: 800 !important;
+}
+
+.scenario-btn:hover {
+    box-shadow: none !important;
+    transform: translate(2px, 2px) !important;
 }
 
 .scenario-btn .nb-card-title {
     margin: 0 !important;
     pointer-events: none;
+    color: var(--text-primary) !important;
 }
