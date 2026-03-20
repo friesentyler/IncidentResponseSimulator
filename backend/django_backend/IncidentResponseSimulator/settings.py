@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-f3o16m&^ax54@h&3#=0tnoh^+-&vbvr8@&8%iulr3gd+n_%s6a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['10.10.40.15', 'localhost']
+ALLOWED_HOSTS = ['10.20.20.24', 'localhost']
 
 
 # Application definition
@@ -142,6 +142,10 @@ if env_static_dirs:
 else:
     STATICFILES_DIRS = []
 
+# Media files (User-uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+ 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:4200').split(',')
 
