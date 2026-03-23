@@ -10,17 +10,18 @@
 }
 
 .nb-card.details {
-  background-color: yellow;
+  background-color: var(--bg-secondary) !important;
   height: calc(100% - 5px) !important;
   width: 100% !important;
   max-width: none !important;
   display: block !important;
   margin: 0 !important;
+  box-shadow: none !important;
 }
 
 .nb-card.details:hover {
   transform: none;
-  box-shadow: 8px 8px 0px #000;
+  box-shadow: none !important;
 }
 
 .details .nb-card-content {
@@ -28,33 +29,39 @@
   flex-direction: column;
   gap: 20px;
   height: 100%;
+  min-height: 0;
 }
 
 .nested-title-card {
   flex: 0 0 20% !important;
-  /* Enforce 20% height */
   height: auto !important;
-  /* Override broad 100% rule */
   margin-bottom: 0 !important;
+  background-color: var(--accent-orange) !important;
+  color: var(--bg-secondary) !important;
+  box-shadow: none !important;
 }
 
-/* Highly specific overrides to kill library hover effects */
+.nested-title-card .nb-card-title {
+  color: var(--bg-secondary) !important;
+  font-weight: 900 !important;
+}
+
+/* Kill library hover effects */
 :host-context(.dashboard-grid) .nb-card.nested-title-card:hover,
 :host-context(.dashboard-grid) .nb-card.nested-body-card:hover,
 .nb-card.nested-title-card:hover,
 .nb-card.nested-body-card:hover {
   transform: none !important;
-  box-shadow: 8px 8px 0px #000 !important;
   transition: none !important;
+  box-shadow: none !important;
 }
 
 .nested-body-card {
   flex: 1;
-  /* Occupy remaining 80% */
-  height: auto !important;
-  /* Override broad 100% rule */
   display: flex;
   flex-direction: column;
+  box-shadow: none !important;
+  min-height: 0; /* Crucial for internal scroll */
 }
 
 .nested-body-card .nb-card-content {
@@ -67,14 +74,15 @@
 .scenario-details-body {
   margin: 20px 0;
   flex: 1;
+  color: var(--text-primary);
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .button-group {
   display: flex;
   justify-content: center;
-  /* Center buttons horizontally */
   gap: 40px;
-  /* Increased gap */
   margin-top: 20px;
   width: 100%;
   padding-bottom: 20px;
@@ -91,11 +99,15 @@
   font-weight: 800;
 }
 
+.nb-button.green {
+  background-color: var(--accent-teal) !important;
+  color: var(--bg-secondary) !important;
+}
+
 .nb-button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
-  box-shadow: 4px 4px 0px #000;
 }
 
 /* Spinner and Status Styles */
@@ -129,4 +141,5 @@
   font-size: 1.2rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+  color: var(--accent-orange);
 }

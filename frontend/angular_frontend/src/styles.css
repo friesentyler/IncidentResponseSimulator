@@ -1,8 +1,101 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-primary: #E5E5E5;
+  --bg-secondary: #FFFFFF;
+  --bg-elevated: #D6D6D6;
+  --text-primary: #333333;
+  --text-secondary: #7D7F7D;
+  --border-primary: #333333;
+  --accent-orange: #FF6F61;
+  --accent-teal: #F7C94C;
+  --shadow-color: #333333;
+}
+
 html,
 body {
-  background-color: #117FEE;
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
   margin: 0px;
   padding: 0px;
   height: 100vh;
+}
+
+/* Global Library Overrides */
+.nb-card, .nb-input, .nb-button {
+  border-color: var(--border-primary) !important;
+}
+
+.nb-card {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 4px 4px 0px var(--shadow-color) !important;
+}
+
+.nb-card:hover {
+  box-shadow: 8px 8px 0px var(--shadow-color) !important;
+}
+
+.nb-input {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-primary) !important;
+}
+
+.nb-input::placeholder {
+  color: var(--text-secondary) !important;
+}
+
+/* Default button overrides */
+.nb-button {
+  box-shadow: 4px 4px 0px var(--shadow-color) !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.nb-button:hover:not(:disabled) {
+  box-shadow: none !important;
+  transform: translate(2px, 2px) !important;
+}
+
+.nb-button:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+/* Blue-variant buttons → teal */
+.nb-button.blue {
+  background-color: var(--accent-teal) !important;
+  color: var(--bg-secondary) !important;
+  font-weight: 800 !important;
+}
+
+/* Orange-variant buttons */
+.nb-button.orange {
+  background-color: var(--accent-orange) !important;
+  color: var(--bg-secondary) !important;
+  font-weight: 800 !important;
+}
+
+/* Card titles and text */
+.nb-card-title {
+  color: var(--text-primary) !important;
+}
+
+.nb-card-text {
+  color: var(--text-secondary) !important;
+}
+
+/* Links */
+a {
+  color: var(--accent-teal);
+}
+
+a:hover {
+  color: var(--accent-orange);
+}
+
+/* Background patterns */
+.dot-grid {
+  background-image: radial-gradient(var(--text-primary) 1.5px, transparent 0);
+  background-size: 20px 20px;
+  background-position: -10px -10px;
+  opacity: 0.15;
 }

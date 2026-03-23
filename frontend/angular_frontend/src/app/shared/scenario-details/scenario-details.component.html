@@ -12,9 +12,9 @@
       <div class="nb-card nested-body-card">
         <div class="nb-card-content">
           <div class="scenario-details-body">
-            <p class="nb-card-text" [class.dimmed]="scenarioStatus === 'loading' || scenarioStatus === 'resetting'">
-              {{ scenarioDescription }}
-            </p>
+            <div class="nb-card-text" [class.dimmed]="scenarioStatus === 'loading' || scenarioStatus === 'resetting'"
+                 [innerHTML]="scenarioDescription">
+            </div>
 
             @if (scenarioStatus === 'loading' || scenarioStatus === 'resetting') {
             <div class="status-overlay">

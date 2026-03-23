@@ -1,20 +1,30 @@
 <nav class="nb-navbar" role="navigation" aria-label="Main navigation">
-  <a routerLink="/" routerLinkActive="active" class="nb-navbar-brand" aria-label="Go to homepage"><img class="nb-card"
-      width="80" height="80" ngSrc="images/IRLogo.png" /></a>
-  <ul class="nb-navbar-nav" role="menubar">
+  <div class="navbar-header">
+    <a routerLink="/" routerLinkActive="active" class="nb-navbar-brand" aria-label="Go to homepage">
+      <img src="images/IRLogo.png" class="nav-logo nb-card" />
+    </a>
+    <div class="hamburger-container">
+      <button class="hamburger" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen" aria-label="Toggle navigation">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+  </div>
+  <ul class="nb-navbar-nav" [class.open]="isMenuOpen" role="menubar">
     <li class="nb-navbar-item" role="none">
-      <a routerLink="/" routerLinkActive="active" class="nb-navbar-link active" role="menuitem"
+      <a routerLink="/" routerLinkActive="active" class="nb-navbar-link" (click)="isMenuOpen = false" role="menuitem"
         aria-current="page">Home</a>
     </li>
     <li class="nb-navbar-item" role="none">
       @if (isLoggedIn$ | async) {
       <a (click)="onLogout()" class="nb-navbar-link" role="menuitem" style="cursor: pointer;">Logout</a>
       } @else {
-      <a routerLink="/register" routerLinkActive="active" class="nb-navbar-link" role="menuitem">Register</a>
+      <a routerLink="/register" routerLinkActive="active" (click)="isMenuOpen = false" class="nb-navbar-link" role="menuitem">Register</a>
       }
     </li>
     <li class="nb-navbar-item" role="none">
-      <a routerLink="/dashboard" routerLinkActive="active" class="nb-navbar-link" role="menuitem">Dashboard</a>
+      <a routerLink="/dashboard" routerLinkActive="active" (click)="isMenuOpen = false" class="nb-navbar-link" role="menuitem">Dashboard</a>
     </li>
   </ul>
 </nav>

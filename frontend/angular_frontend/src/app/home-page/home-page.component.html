@@ -1,13 +1,38 @@
-<div class="hero-text">
-  <h1>{{ title }}</h1>
+<div class="background-canvas dot-grid"></div>
+<div class="terminal-container">
+  <div class="window-frame">
+    <div class="window-header">
+      <div class="window-controls">
+        <span class="control-dot coral"></span>
+        <span class="control-dot yellow"></span>
+        <span class="control-dot gray"></span>
+      </div>
+      <div class="window-title">incident_response.sh</div>
+    </div>
+    <div class="crt-screen" [class.powered-off]="isPoweredOff">
+      <div class="scanlines"></div>
+      <div class="hero">
+        <h1>{{ displayedTitle }}<span class="cursor" [class.hidden]="!showCursor">_</span></h1>
+        <div class="content-reveal" [class.visible]="showContent">
+          <h2>{{ heroText }}</h2>
+          <button class="nb-button orange" (click)="onCTAButtonClick()">{{ ctaButtonText }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="body-content">
-  <div class="body-content-left">
-    <h2>{{ heroText }}</h2>
-    <button class="nb-button orange" (click)="onCTAButtonClick()">{{ ctaButtonText }}</button>
-  </div>
-  <div class="image-wrapper">
-    <img ngSrc="images/homepageArt.png" priority fill alt="Incident Response Simulator logo" />
+<div class="nb-marquee footer-marquee">
+  <div class="nb-marquee-content">
+    <span>SYSTEM STATUS: MONITORING</span>
+    <span>THREAT LEVEL: LOW</span>
+    <span>SCENARIOS LOADED: 42</span>
+    <span>READY TO SIMULATE</span>
+    <span>[IP: 192.168.1.104] TRACE_ACTIVE</span>
+    <span>SYSTEM STATUS: MONITORING</span>
+    <span>THREAT LEVEL: LOW</span>
+    <span>SCENARIOS LOADED: 42</span>
+    <span>READY TO SIMULATE</span>
+    <span>[IP: 192.168.1.104] TRACE_ACTIVE</span>
   </div>
 </div>
