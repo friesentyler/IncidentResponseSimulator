@@ -1,5 +1,10 @@
 from django.db import models
 
+class ScenarioCredential(models.Model):
+    scenario_credentials = models.FileField(upload_to='scenario_credentials/', blank=True)
+
+    def __str__(self):
+        return f"Credentials for {self.scenario_credentials}"
 
 class ScenarioModel(models.Model):
     """
@@ -17,6 +22,7 @@ class ScenarioModel(models.Model):
             ('resetting', 'Resetting'),
         ]
     )
+    scenario_credentials = models.ForeignKey(ScenarioCredential, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Scenario'

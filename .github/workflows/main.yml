@@ -25,12 +25,12 @@ jobs:
           sudo bash -c 'cat > /etc/wireguard/wg0.conf <<EOF
           [Interface]
           PrivateKey = ${{ secrets.WG_PRIVATE_KEY }}
-          Address = 10.8.0.6/24
+          Address = 10.8.0.6/32
           MTU = 1300
 
           [Peer]
           PublicKey = ${{ secrets.WG_SERVER_PUBLIC_KEY }}
-          AllowedIPs = 10.10.0.0/16
+          AllowedIPs = 10.20.20.0/24
           Endpoint = ${{ secrets.WG_ENDPOINT }}
           PersistentKeepalive = 25
           EOF'
@@ -52,7 +52,7 @@ jobs:
           mkdir -p ~/.ssh
           sleep 2
           ssh-keyscan ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts || true
-          ssh-keyscan 10.10.40.18 >> ~/.ssh/known_hosts || true
+          ssh-keyscan 10.20.20.25 >> ~/.ssh/known_hosts || true
 
       - name: Deploy Django + Angular (Web VM)
         run: |
@@ -77,7 +77,7 @@ jobs:
           STRIPE_SECRET_KEY='${{ secrets.STRIPE_SECRET_KEY }}' \
           STRIPE_PRODUCT_ID='${{ secrets.STRIPE_PRODUCT_ID }}' \
           STRIPE_PUBLISHABLE_KEY='${{ secrets.STRIPE_PUBLISHABLE_KEY }}' \
-          EXECUTION_SERVICE_URL='http://10.10.40.18:5001' \
+          EXECUTION_SERVICE_URL='http://10.20.20.25:5001' \
           SSH_HOST='${{ secrets.SSH_HOST }}' \
           DEBUG=False \
           ./deployment/deploy.sh
@@ -87,7 +87,7 @@ jobs:
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
             -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@10.10.40.18 << 'EOF'
+            ${{ secrets.SSH_USER }}@10.20.20.25 << 'EOF'
           set -e
           echo "🚀 Configuring network for VPN compatibility"
           # 1. Set MTU to 1200 (Extra conservative for double VPNs)
