@@ -165,3 +165,16 @@ label {
     color: var(--bg-secondary);
     margin: 0;
 }
+
+@media (max-width: 768px) {
+    .payment-card {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    .title {
+        font-size: 1.5rem;
+    }
+    .price {
+        font-size: 2rem;
+    }
+}

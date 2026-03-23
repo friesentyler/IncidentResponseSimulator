@@ -1,6 +1,11 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.3fr 2fr;
+  grid-template-columns: 1.5fr 2fr;
   height: 100%;
   width: 100%;
   gap: 20px;
@@ -29,18 +34,21 @@
   padding: 0 15px 15px 0;
   box-sizing: border-box;
   min-width: 275px;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
-.sidebar .card-container {
+.sidebar .nb-card-content .card-container {
   display: flex !important;
   flex-direction: column !important;
   gap: 20px;
-  padding-bottom: 30px;
-  height: auto !important;
+  height: max-content !important;
+  padding-bottom: 20px;
 }
 
 /* Explicitly override the broad grid height rule for individual scenario cards */
-.sidebar .nb-card {
+.sidebar .card-container .nb-card {
+  /* ... this targets cards inside the list ... */
   height: auto !important;
   margin-bottom: 0 !important;
 }
@@ -67,4 +75,18 @@
   padding: 10px 25px;
   flex: 1;
   min-height: 0;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+  .sidebar {
+    padding: 0 0 15px 0;
+    min-width: 100%;
+  }
+  .content-area {
+    padding: 0;
+  }
 }

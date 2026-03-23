@@ -229,3 +229,32 @@ h2 {
 .footer-marquee span {
   display: inline-block;
 }
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 1rem;
+  }
+  h1 {
+    font-size: 2rem;
+    min-height: 2.5rem;
+  }
+  h2 {
+    font-size: 0.9rem;
+  }
+  .terminal-container {
+    padding: 1rem;
+  }
+  .window-header {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  .window-title {
+    font-size: 0.75rem;
+  }
+  .nb-button.orange {
+    font-size: 1.2rem;
+    min-width: 160px;
+    height: 50px;
+    padding: 0 1rem;
+  }
+}
