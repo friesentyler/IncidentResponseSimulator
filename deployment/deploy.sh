@@ -78,6 +78,9 @@ nohup backend/venv/bin/gunicorn -c "$PROJECT_ROOT/deployment/gunicorn_final.conf
 # Restart Nginx (Reverse Proxy)
 if command -v systemctl >/dev/null 2>&1; then
     echo "⚙️ Applying Nginx configuration..."
+    # Remove the default nginx config to avoid conflicts with 'default_server'
+    rm -f /etc/nginx/sites-enabled/default
+    
     cp deployment/nginx_final.conf /etc/nginx/sites-available/incident_response
     ln -sf /etc/nginx/sites-available/incident_response /etc/nginx/sites-enabled/
     
