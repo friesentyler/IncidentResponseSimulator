@@ -78,8 +78,8 @@ nohup backend/venv/bin/gunicorn -c "$PROJECT_ROOT/deployment/gunicorn_final.conf
 # Restart Nginx (Reverse Proxy)
 if command -v systemctl >/dev/null 2>&1; then
     echo "⚙️ Applying Nginx configuration..."
-    sudo cp deployment/nginx_final.conf /etc/nginx/sites-available/incident_response
-    sudo ln -sf /etc/nginx/sites-available/incident_response /etc/nginx/sites-enabled/
+    cp deployment/nginx_final.conf /etc/nginx/sites-available/incident_response
+    ln -sf /etc/nginx/sites-available/incident_response /etc/nginx/sites-enabled/
     
     # Fix permissions for Nginx to access the root folder
     echo "🔐 Setting directory permissions..."
@@ -89,8 +89,8 @@ if command -v systemctl >/dev/null 2>&1; then
     chmod +x "$PROJECT_ROOT/backend/django_backend"
     chmod -R 755 "$PROJECT_ROOT/backend/django_backend/static"
 
-    sudo nginx -t
-    sudo systemctl restart nginx
+    nginx -t
+    systemctl restart nginx
 else
     echo "⚠️ systemctl not found, skipping nginx restart."
 fi
