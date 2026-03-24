@@ -5,7 +5,7 @@
 - For clarity, while the Scenario Orchestration VM is owned by Network Admin, the User Web Application talks to the Scenario Orchestration VM via an HTTP protocol, the webserver on the Scenario Orchestration VM that chooses which bash script to run is owned by development. The bash scripts are owned by Network Admin though.
 ```mermaid
 C4Context
-title Incident Response Simulator
+title Incident Response Simulator - System Context Diagram
 %% System Context Diagram
 %% Purpose: Illustrates users, external systems, and ownership boundaries
 %% between developer-managed application services and infrastructure-managed
