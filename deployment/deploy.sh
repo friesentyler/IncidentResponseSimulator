@@ -40,6 +40,9 @@ cd ../../
 
 # 3. Setup Django Backend
 echo "🐍 Setting up Django backend..."
+
+PROJECT_ROOT=$(pwd) # Capture root before entering backend dir
+
 cd backend
 
 # Activate virtualenv
@@ -52,13 +55,15 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 cd django_backend
+# Ensure STATIC_ROOT is set relative to project root if not in settings
+export STATIC_ROOT="$PROJECT_ROOT/backend/django_backend/static"
 python manage.py collectstatic --noinput
 python manage.py migrate
 cd ../../
 
 # 4. Finalize Infrastructure Configs
 echo "🛠️ Finalizing Nginx and Gunicorn configs..."
-PROJECT_ROOT=$(pwd)
+# PROJECT_ROOT is already set above
 # Use a temporary file to avoid editing the template directly in place
 sed "s|{{PROJECT_ROOT}}|$PROJECT_ROOT|g" deployment/nginx.conf > deployment/nginx_final.conf
 sed "s|{{PROJECT_ROOT}}|$PROJECT_ROOT|g" deployment/gunicorn_config.py > deployment/gunicorn_final.conf
