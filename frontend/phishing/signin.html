@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In – SecureVault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface-raised: #21253a;
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #4f7fff;
+      --accent-hover: #6b91ff;
+      --text-primary: #f0f2ff;
+      --text-secondary: #8b90a7;
+      --error: #ff5c5c;
+      --input-bg: #13151f;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(79, 127, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 127, 255, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Glow orbs */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 600px 400px at 20% 10%, rgba(79, 127, 255, 0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 350px at 80% 90%, rgba(107, 145, 255, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      margin: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 36px;
+      box-shadow:
+        0 0 0 1px rgba(79, 127, 255, 0.06),
+        0 24px 64px rgba(0, 0, 0, 0.5),
+        0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #fff;
+    }
+
+    .logo-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    .subtitle {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79, 127, 255, 0.15);
+    }
+
+    input::placeholder {
+      color: #3d4260;
+    }
+
+    .forgot {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+
+    .forgot a {
+      font-size: 12.5px;
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .forgot a:hover {
+      color: var(--accent-hover);
+    }
+
+    .error-msg {
+      display: none;
+      background: rgba(255, 92, 92, 0.1);
+      border: 1px solid rgba(255, 92, 92, 0.3);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-size: 13px;
+      color: var(--error);
+      margin-bottom: 16px;
+    }
+
+    .error-msg.visible {
+      display: block;
+    }
+
+    .btn-sign-in {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      border: none;
+      border-radius: 9px;
+      color: #fff;
+      font-size: 14.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      letter-spacing: 0.1px;
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 8px;
+    }
+
+    .btn-sign-in:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-sign-in:active {
+      transform: translateY(0px);
+      opacity: 1;
+    }
+
+    .btn-sign-in.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+
+    .btn-sign-in.loading .btn-text { display: none; }
+    .btn-sign-in.loading .spinner { display: block; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .sso-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text-primary);
+      font-size: 13.5px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .sso-btn:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    .sso-btn img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .footer {
+      margin-top: 26px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover {
+      color: var(--accent-hover);
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 20px;
+      font-size: 11.5px;
+      color: #4a5070;
+    }
+
+    .security-badge svg {
+      width: 13px;
+      height: 13px;
+      fill: #4a5070;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo-row">
+      <div class="logo-icon">
+        <!-- Shield icon -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6l-8-4z"/>
+        </svg>
+      </div>
+      <span class="logo-name">SecureVault</span>
+    </div>
+
+    <h1>Welcome back</h1>
+    <p class="subtitle">Sign in to access your secure workspace.</p>
+
+    <div class="error-msg" id="errorMsg">
+      Incorrect email or password. Please try again.
+    </div>
+
+    <form id="signinForm" novalidate>
+      <div class="field">
+        <label for="email">Email address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@company.com"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          required
+        />
+        <div class="forgot">
+          <a href="#" id="forgotLink">Forgot password?</a>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-sign-in" id="submitBtn">
+        <span class="btn-text">Sign in</span>
+        <span class="spinner"></span>
+      </button>
+    </form>
+
+    <div class="divider">or continue with</div>
+
+    <button class="sso-btn" id="googleSSOBtn" type="button">
+      <!-- Google "G" logo inline SVG -->
+      <svg viewBox="0 0 48 48" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        <path fill="none" d="M0 0h48v48H0z"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="footer">
+      Don't have an account? <a href="#" id="signupLink">Create one</a>
+    </div>
+
+    <div class="security-badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+      </svg>
+      256-bit SSL encrypted connection
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('signinForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errorMsg.classList.remove('visible');
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) return;
+
+      // Simulate loading
+      submitBtn.classList.add('loading');
+
+      setTimeout(() => {
+        submitBtn.classList.remove('loading');
+        // Always show error — credentials are never accepted (phishing capture point)
+        errorMsg.classList.add('visible');
+      }, 1400);
+    });
+
+    // Prevent default on decorative links
+    document.getElementById('forgotLink').addEventListener('click', e => e.preventDefault());
+    document.getElementById('signupLink').addEventListener('click', e => e.preventDefault());
+    document.getElementById('googleSSOBtn').addEventListener('click', () => {
+      document.getElementById('googleSSOBtn').style.opacity = '0.5';
+      setTimeout(() => { document.getElementById('googleSSOBtn').style.opacity = ''; }, 800);
+    });
+  </script>
+</body>
+</html>
