@@ -9,11 +9,11 @@ SCRIPTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'scripts')
 
 # Whitelist mapping of scenario IDs (from Django DB) to absolute bash script paths
 # We map each valid scenario ID to its specific setup and teardown scripts.
-# Example: Scenario ID 1 maps to test_scenario.sh (start) and test_teardown.sh (stop)
+# Example: Scenario ID 1 maps to Credential_Theft_Script.sh (start) and reset.sh (stop)
 SCENARIOS = {
     "1": {
-        "start": os.path.join(SCRIPTS_DIR, "test_scenario.sh"),
-        "stop": os.path.join(SCRIPTS_DIR, "test_teardown.sh")
+        "start": os.path.join(SCRIPTS_DIR, "Credential_Theft_Script.sh"),
+        "stop": os.path.join(SCRIPTS_DIR, "reset.sh")
     }
 }
 
