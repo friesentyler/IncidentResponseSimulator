@@ -4,7 +4,7 @@
       <div class="nb-card-content scenarios">
         <div class="card-container">
           @for (scenario of scenarios(); track scenario.id) {
-          <app-scenario-button [scenarioName]="scenario.scenario_name" (click)="selectScenario(scenario)">
+          <app-scenario-button [scenarioName]="scenario.scenario_name" [locked]="scenario.requires_higher_tier" (click)="selectScenario(scenario)">
           </app-scenario-button>
           }
         </div>
@@ -16,6 +16,7 @@
     <app-scenario-details [scenarioTitle]="selectedScenario()?.scenario_name || 'Scenario Details'"
       [scenarioDescription]="selectedScenario()?.scenario_description || 'Select a scenario from the left to view details and start the interactive simulation or test your knowledge with a quiz.'"
       [scenarioStatus]="selectedScenario()?.scenario_status" [scenarioId]="selectedScenario()?.id"
+      [requiresHigherTier]="selectedScenario()?.requires_higher_tier"
       (launch)="launchScenario()">
     </app-scenario-details>
   </div>

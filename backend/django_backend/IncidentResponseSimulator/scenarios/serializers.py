@@ -25,8 +25,8 @@ class ScenarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ScenarioModel
-        fields = ['id', 'scenario_name', 'scenario_description', 'scenario_status', 'download_url']
-        read_only_fields = ['id', 'scenario_name', 'scenario_description']
+        fields = ['id', 'scenario_name', 'scenario_description', 'scenario_status', 'requires_higher_tier', 'download_url']
+        read_only_fields = ['id', 'scenario_name', 'scenario_description', 'requires_higher_tier']
 
     def get_download_url(self, obj):
         if obj.scenario_status == 'active' and obj.scenario_credentials:

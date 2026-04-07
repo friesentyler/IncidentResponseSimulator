@@ -14,6 +14,7 @@ export class ScenarioDetailsComponent {
   @Input() scenarioDescription: string = 'Select a scenario from the left to view details and start the interactive simulation or test your knowledge with a quiz.';
   @Input() scenarioStatus: string | undefined = '';
   @Input() scenarioId: number | undefined;
+  @Input() requiresHigherTier: boolean | undefined = false;
 
   @Output() launch = new EventEmitter<void>();
 

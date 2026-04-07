@@ -27,7 +27,11 @@
           </div>
 
           <div class="button-group">
-            @if (scenarioStatus !== 'loading' && scenarioStatus !== 'resetting') {
+            @if (requiresHigherTier) {
+              <p class="locked-message" style="color: var(--accent-orange); font-weight: 800; text-align: center; width: 100%; font-size: 1.2rem;">
+                This scenario is only available for higher payment tiers. Please contact support to unlock.
+              </p>
+            } @else if (scenarioStatus !== 'loading' && scenarioStatus !== 'resetting') {
             <button class="nb-button" 
               [class.blue]="!scenarioId || scenarioStatus === 'inactive'"
               [class.orange]="scenarioStatus === 'active'" 

@@ -24,6 +24,11 @@
     transform: translate(2px, 2px) !important;
 }
 
+.scenario-btn.locked {
+    opacity: 0.5 !important;
+    filter: grayscale(100%) !important;
+}
+
 .scenario-btn .nb-card-title {
     margin: 0 !important;
     pointer-events: none;

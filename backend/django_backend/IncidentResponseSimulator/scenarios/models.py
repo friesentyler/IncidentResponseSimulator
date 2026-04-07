@@ -22,6 +22,7 @@ class ScenarioModel(models.Model):
             ('resetting', 'Resetting'),
         ]
     )
+    requires_higher_tier = models.BooleanField(default=False)
     scenario_credentials = models.ForeignKey(ScenarioCredential, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:

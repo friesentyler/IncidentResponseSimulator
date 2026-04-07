@@ -8,6 +8,7 @@ export interface Scenario {
     scenario_name: string;
     scenario_description: string;
     scenario_status: 'active' | 'inactive' | 'loading' | 'resetting';
+    requires_higher_tier: boolean;
     download_url: string | null;
 }
 
