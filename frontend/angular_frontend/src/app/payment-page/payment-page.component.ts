@@ -82,7 +82,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           this.success = true;
           this.loading = false;
           setTimeout(() => {
-            this.router.navigate(['/']);
+            this.router.navigate(['/dashboard']);
           }, 2000);
         },
         error: (err) => {
