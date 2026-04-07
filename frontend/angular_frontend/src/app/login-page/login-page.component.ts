@@ -33,8 +33,8 @@ export class LoginPageComponent {
                 next: () => {
                     this.loginSuccess = true;
                     setTimeout(() => {
-                        this.router.navigate(['/']);
-                    }, 3000);
+                        this.router.navigate(['/dashboard']);
+                    }, 1000);
                 },
                 error: (err) => {
                     console.error('Login failed', err);
