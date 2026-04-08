@@ -26,7 +26,7 @@ jobs:
           [Interface]
           PrivateKey = ${{ secrets.WG_PRIVATE_KEY }}
           Address = 10.8.0.6/32
-          MTU = 1200
+          MTU = 1100
 
           [Peer]
           PublicKey = ${{ secrets.WG_SERVER_PUBLIC_KEY }}
@@ -39,10 +39,10 @@ jobs:
         run: |
           sudo wg-quick up wg0
           sleep 2
-          # Force MTU to conservative limit for stable VPN transport
-          sudo ip link set dev wg0 mtu 1200
+          # Force MTU to ultra-conservative limit for stable VPN transport
+          sudo ip link set dev wg0 mtu 1100
           # Force MSS clamping to a fixed safe value (MTU - 40)
-          sudo iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o wg0 -j TCPMSS --set-mss 1160
+          sudo iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -o wg0 -j TCPMSS --set-mss 1060
           ip addr show wg0
           ip route show
           nc -vz ${{ secrets.SSH_HOST }} 22 || echo "TCP to SSH port failed"
@@ -55,14 +55,25 @@ jobs:
           ssh-keyscan 10.20.20.25 >> ~/.ssh/known_hosts || true
 
       - name: Deploy Django + Angular (Web VM)
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
+          sshpass -e ssh -v -T \
             -o StrictHostKeyChecking=no \
-            -o IPQoS=throughput \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=5 \
+            -o IPQoS=none \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=10 \
+            -o TCPKeepAlive=yes \
+            -o SendEnv=none \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           set -e
+          
+          # Git Optimizations for unstable networks
+          git config --global core.compression 0
+          git config --global http.postBuffer 524288000
+          git config --global http.maxRequestBuffer 524288000
+          git config --global pack.windowMemory 256m
+          git config --global pack.packSizeLimit 256m
           
           cd ~
           if [ ! -d "IncidentResponseSimulator/.git" ]; then
@@ -87,12 +98,16 @@ jobs:
           EOF
 
       - name: Deploy Execution Service (Attack VM)
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -vvv -T \
+          sshpass -e ssh -v -T \
             -o StrictHostKeyChecking=no \
-            -o IPQoS=throughput \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=5 \
+            -o IPQoS=none \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=10 \
+            -o TCPKeepAlive=yes \
+            -o SendEnv=none \
             ${{ secrets.SSH_USER }}@10.20.20.25 << 'EOF'
           set -e
           echo "🚀 Configuring network for VPN compatibility"
