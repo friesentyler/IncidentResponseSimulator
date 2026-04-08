@@ -1,6 +1,7 @@
 import json
 import stripe
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -97,6 +98,7 @@ def subscription_status(request):
     return Response(serializer.data)
 
 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def stripe_webhook(request):

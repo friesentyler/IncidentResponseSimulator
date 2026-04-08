@@ -61,6 +61,12 @@ jobs:
             -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           set -e
+          echo "🚀 Configuring network for VPN compatibility"
+          INTERFACE=$(ip route | grep default | awk '{print $5}' | head -n 1)
+          if [ -n "$INTERFACE" ]; then
+            echo "🔧 Setting MTU on $INTERFACE to 1200"
+            sudo ip link set dev "$INTERFACE" mtu 1200 || echo "⚠️ Could not set MTU"
+          fi
           
           cd ~
           if [ ! -d "IncidentResponseSimulator/.git" ]; then
