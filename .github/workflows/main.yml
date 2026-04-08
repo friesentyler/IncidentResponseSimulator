@@ -26,6 +26,7 @@ jobs:
           [Interface]
           PrivateKey = ${{ secrets.WG_PRIVATE_KEY }}
           Address = 10.8.0.6/32
+          DNS = 10.20.20.51, 1.1.1.1
           MTU = 1300
 
           [Peer]

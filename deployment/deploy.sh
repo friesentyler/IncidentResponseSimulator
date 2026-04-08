@@ -24,7 +24,7 @@ mkdir -p frontend/angular_frontend/src/environments
 cat > frontend/angular_frontend/src/environments/environment.ts <<EOL
 export const environment = {
   production: true,
-  apiUrl: 'http://${SSH_HOST}/api/',
+  apiUrl: '/api/',
   stripePublishableKey: '${STRIPE_PUBLISHABLE_KEY}'
 };
 EOL
