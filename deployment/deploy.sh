@@ -10,6 +10,12 @@ echo "🚀 Starting production deployment process..."
 # 1. Setup Environment Files
 echo "📝 Setting up environment files..."
 
+# Trim any accidental newlines/whitespace from secrets
+STRIPE_SECRET_KEY=$(echo -n "$STRIPE_SECRET_KEY" | xargs)
+STRIPE_PRODUCT_ID=$(echo -n "$STRIPE_PRODUCT_ID" | xargs)
+STRIPE_PUBLISHABLE_KEY=$(echo -n "$STRIPE_PUBLISHABLE_KEY" | xargs)
+EXECUTION_SERVICE_URL=$(echo -n "$EXECUTION_SERVICE_URL" | xargs)
+
 # Create Django .env
 cat > backend/.env <<EOL
 STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}

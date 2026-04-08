@@ -162,9 +162,9 @@ if not isinstance(CORS_ALLOWED_ORIGINS, list):
     CORS_ALLOWED_ORIGINS = [CORS_ALLOWED_ORIGINS]
 
 # Stripe Configuration
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
-STRIPE_PRODUCT_ID = os.getenv('STRIPE_PRODUCT_ID', '')
-STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '').strip()
+STRIPE_PRODUCT_ID = os.getenv('STRIPE_PRODUCT_ID', '').strip()
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '').strip()
 
 # Execution Service Configuration
 EXECUTION_SERVICE_URL = os.getenv('EXECUTION_SERVICE_URL', 'http://localhost:5001')
