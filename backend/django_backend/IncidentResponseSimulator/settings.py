@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-f3o16m&^ax54@h&3#=0tnoh^+-&vbvr8@&8%iulr3gd+n_%s6a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['10.20.20.24', 'localhost']
+ALLOWED_HOSTS = ['10.20.20.24', 'web.irsim.lab', 'localhost']
 
 
 # Application definition
@@ -148,7 +148,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
  
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:4200').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:4200,http://web.irsim.lab').split(',')
+
+CSRF_TRUSTED_ORIGINS = ['http://web.irsim.lab', 'https://web.irsim.lab']
 
 CORS_ALLOW_HEADERS = [
     "content-type",
